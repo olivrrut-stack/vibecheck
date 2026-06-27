@@ -16,7 +16,11 @@
   --color-line-strong: #34343b;
   --color-ink: #ececee;
   --color-ink-muted: #8a8a93;
-  --color-ink-faint: #5d5d66;
+  --color-ink-faint: #71717a;
+
+  /* Apple system blue (dark appearance) — the App Store "Get" / link accent.
+     Reserved for the listing chrome so it reads unmistakably as the Store. */
+  --color-accent: #0a84ff;
 
   --color-risk-high: #f0506e;
   --color-risk-medium: #e8b23a;

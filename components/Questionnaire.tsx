@@ -9,43 +9,8 @@ import {
   type DownloadsCode,
   type WebViewShell,
 } from "@/lib/types";
-
-function Question({
-  index,
-  title,
-  emphasis = false,
-  children,
-}: {
-  index: number;
-  title: string;
-  emphasis?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <fieldset
-      aria-labelledby={`q${index}-num q${index}-title`}
-      className={`rounded-[var(--radius-card)] border bg-surface p-5 sm:p-6 ${
-        emphasis ? "border-line-strong" : "border-line"
-      }`}
-    >
-      <legend className="flex items-baseline gap-2 px-1">
-        <span
-          id={`q${index}-num`}
-          className="font-mono text-xs font-medium text-ink-faint"
-        >
-          Q{index}
-        </span>
-      </legend>
-      <p
-        id={`q${index}-title`}
-        className="text-base font-medium text-ink sm:text-[17px]"
-      >
-        {title}
-      </p>
-      <div className="mt-4">{children}</div>
-    </fieldset>
-  );
-}
+import Carousel from "./Carousel";
+import ScreenshotCard from "./ScreenshotCard";
 
 /** Selectable option row backed by a real checkbox/radio for accessibility. */
 function OptionRow({
@@ -63,7 +28,7 @@ function OptionRow({
 }) {
   return (
     <label
-      className={`group flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink ${
+      className={`group flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 text-sm transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink ${
         checked
           ? "border-line-strong bg-surface-2 text-ink"
           : "border-line bg-transparent text-ink-muted hover:border-line-strong hover:text-ink"
@@ -103,6 +68,40 @@ function OptionRow({
   );
 }
 
+/** One question rendered as a portrait screenshot card. */
+function QuestionCard({
+  index,
+  title,
+  hint,
+  footer,
+  children,
+}: {
+  index: number;
+  title: string;
+  hint?: string;
+  /** One-line note pinned to the card's bottom edge — fills the frame and says
+   *  which guideline the question maps to. */
+  footer: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <ScreenshotCard eyebrow={`Question ${index} of 5${index === 2 ? " · Key" : ""}`}>
+      <fieldset className="flex flex-1 flex-col">
+        <legend className="text-[17px] font-semibold leading-snug text-ink">
+          {title}
+        </legend>
+        {hint && (
+          <p className="mt-2 text-xs leading-relaxed text-ink-muted">{hint}</p>
+        )}
+        <div className="mt-4 flex flex-1 flex-col gap-2">{children}</div>
+        <p className="mt-4 border-t border-line pt-3 text-[11px] leading-snug text-ink-faint">
+          {footer}
+        </p>
+      </fieldset>
+    </ScreenshotCard>
+  );
+}
+
 export default function Questionnaire({
   value,
   onChange,
@@ -122,115 +121,121 @@ export default function Questionnaire({
 
   const canSubmit = value.safariDiff.trim().length > 0;
 
+  const cards = [
+    <QuestionCard
+      key="q1"
+      index={1}
+      title="How did you build your app?"
+      footer="Context for your review — not scored on its own."
+    >
+      {BUILD_TOOLS.map((tool) => (
+        <OptionRow
+          key={tool}
+          type="checkbox"
+          name="buildTools"
+          label={tool}
+          checked={value.buildTools.includes(tool)}
+          onChange={() => toggle("buildTools", tool)}
+        />
+      ))}
+    </QuestionCard>,
+
+    <QuestionCard
+      key="q2"
+      index={2}
+      title="What does your app do that someone couldn't just do in Safari?"
+      hint="“It looks nice” or “it’s easy to use” aren’t valid answers. Apple wants to know why it has to be a native app and not just a website."
+      footer="The single biggest factor in your risk score."
+    >
+      <textarea
+        value={value.safariDiff}
+        onChange={(e) => onChange({ ...value, safariDiff: e.target.value })}
+        rows={5}
+        maxLength={4000}
+        placeholder="e.g. it uses the camera, works offline, sends push notifications, accesses health data…"
+        className="w-full flex-1 resize-none rounded-lg border border-line-strong bg-canvas px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-ink"
+      />
+    </QuestionCard>,
+
+    <QuestionCard
+      key="q3"
+      index={3}
+      title="Does your app download or execute any code from the internet while it’s running?"
+      footer="Probes Guideline 2.5.2 — code execution. “Yes” is a blocker."
+    >
+      {DOWNLOADS_CODE_OPTIONS.map((opt) => (
+        <OptionRow
+          key={opt}
+          type="radio"
+          name="downloadsCode"
+          label={opt}
+          checked={value.downloadsCode === opt}
+          onChange={() =>
+            onChange({ ...value, downloadsCode: opt as DownloadsCode })
+          }
+        />
+      ))}
+    </QuestionCard>,
+
+    <QuestionCard
+      key="q4"
+      index={4}
+      title="Is your app’s main screen a website or web content loaded inside the app?"
+      footer="Probes Guideline 4.2 — the web-wrapper test."
+    >
+      {WEBVIEW_OPTIONS.map((opt) => (
+        <OptionRow
+          key={opt}
+          type="radio"
+          name="webViewShell"
+          label={opt}
+          checked={value.webViewShell === opt}
+          onChange={() =>
+            onChange({ ...value, webViewShell: opt as WebViewShell })
+          }
+        />
+      ))}
+    </QuestionCard>,
+
+    <QuestionCard
+      key="q5"
+      index={5}
+      title="Which of these does your app actually use?"
+      footer="Real native features count in your favor against 4.2."
+    >
+      {NATIVE_FEATURES.map((feature) => (
+        <OptionRow
+          key={feature}
+          type="checkbox"
+          name="nativeFeatures"
+          label={feature}
+          checked={value.nativeFeatures.includes(feature)}
+          onChange={() => toggle("nativeFeatures", feature)}
+        />
+      ))}
+    </QuestionCard>,
+  ];
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         if (canSubmit) onSubmit();
       }}
-      className="space-y-5"
     >
-      <Question index={1} title="How did you build your app?">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {BUILD_TOOLS.map((tool) => (
-            <OptionRow
-              key={tool}
-              type="checkbox"
-              name="buildTools"
-              label={tool}
-              checked={value.buildTools.includes(tool)}
-              onChange={() => toggle("buildTools", tool)}
-            />
-          ))}
-        </div>
-      </Question>
+      <Carousel items={cards} unitLabel="Question" ariaLabel="App questions" />
 
-      <Question
-        index={2}
-        emphasis
-        title="What does your app do that someone couldn't just do in Safari?"
-      >
-        <textarea
-          value={value.safariDiff}
-          onChange={(e) => onChange({ ...value, safariDiff: e.target.value })}
-          rows={4}
-          placeholder="e.g. it uses the camera, works offline, sends push notifications, accesses health data..."
-          className="w-full resize-y rounded-lg border border-line-strong bg-canvas px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-ink"
-        />
-        <p className="mt-2.5 text-xs leading-relaxed text-ink-muted">
-          <span className="font-medium text-ink">Tip:</span> &ldquo;it looks
-          nice&rdquo; or &ldquo;it&rsquo;s easy to use&rdquo; are not valid
-          answers here. Apple wants to know why it needs to be a native app and
-          not just a website.
-        </p>
-      </Question>
-
-      <Question
-        index={3}
-        title="Does your app download or execute any code from the internet while it's running?"
-      >
-        <div className="grid gap-2 sm:grid-cols-3">
-          {DOWNLOADS_CODE_OPTIONS.map((opt) => (
-            <OptionRow
-              key={opt}
-              type="radio"
-              name="downloadsCode"
-              label={opt}
-              checked={value.downloadsCode === opt}
-              onChange={() =>
-                onChange({ ...value, downloadsCode: opt as DownloadsCode })
-              }
-            />
-          ))}
-        </div>
-      </Question>
-
-      <Question
-        index={4}
-        title="Is your app's main screen a website or web content loaded inside the app?"
-      >
-        <div className="grid gap-2">
-          {WEBVIEW_OPTIONS.map((opt) => (
-            <OptionRow
-              key={opt}
-              type="radio"
-              name="webViewShell"
-              label={opt}
-              checked={value.webViewShell === opt}
-              onChange={() =>
-                onChange({ ...value, webViewShell: opt as WebViewShell })
-              }
-            />
-          ))}
-        </div>
-      </Question>
-
-      <Question index={5} title="Which of these does your app actually use?">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {NATIVE_FEATURES.map((feature) => (
-            <OptionRow
-              key={feature}
-              type="checkbox"
-              name="nativeFeatures"
-              label={feature}
-              checked={value.nativeFeatures.includes(feature)}
-              onChange={() => toggle("nativeFeatures", feature)}
-            />
-          ))}
-        </div>
-      </Question>
-
-      <div className="pt-1">
+      <div className="mt-7">
         <button
           type="submit"
           disabled={!canSubmit}
-          className="w-full rounded-xl bg-ink px-6 py-4 text-base font-semibold text-canvas transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="w-full rounded-full bg-accent px-6 py-4 text-base font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-ink-muted"
         >
           Check my app
         </button>
         {!canSubmit && (
           <p className="mt-2.5 text-center text-xs text-ink-faint">
-            Answer Q2 to run the check — it&rsquo;s the question Apple cares about
+            Answer Question 2 to run the check — it’s the one Apple cares about
             most.
           </p>
         )}

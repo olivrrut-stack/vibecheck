@@ -26,22 +26,35 @@ Two UI states, one page (`app/page.tsx` state machine): `idle` (questionnaire) �
   `{ riskLevel, risks[], verdict }`. The API route enforces that shape via
   `output_config.format` (JSON schema) plus defensive validation (`isValidDiagnosis`).
 
-## The 4 guidelines that drive the product
+## The guidelines that drive the product
 
-- **4.3** Minimum Functionality / spam — the #1 rejection for vibe-coded apps. Weak/vague Q2
-  answer = major red flag.
-- **2.5.2** Code execution — downloading/running code after review. Q3 = "Yes" is a blocker.
-- **4.2** Minimum Functionality performance — placeholder/broken/WebView-shell apps. Q4 =
-  "website in a shell" = high risk for both 4.2 and 4.3.
-- **5.1.1** Privacy — undisclosed data collection.
+Verbatim from Apple's live App Store Review Guidelines (verified 2026-06). The system
+prompt in `lib/prompt.ts` pins these to a closed list with exact titles so the model can
+never cite a fake clause.
+
+- **4.2 Minimum Functionality** — the #1 rejection for vibe-coded apps: repackaged
+  websites / web wrappers / "could just be a Safari bookmark." Weak or vague Q2 answer, or a
+  Q4 "website in a shell," is the major red flag. (Earlier docs mislabeled this as 4.3 —
+  4.2 is the real web-wrapper clause; 4.3 is Spam.)
+- **4.3 Spam** — duplicate or indistinguishable apps. 4.3(a) many near-identical apps;
+  4.3(b) crowded categories that must be meaningfully different.
+- **2.5.2 Software Requirements** — may not download/install/execute code that changes
+  features after review. Q3 = "Yes" is a blocker.
+- **5.1.1 Data Collection and Storage** — undisclosed data collection; needs a privacy
+  policy, consent, minimization, account deletion.
+- **4.1 Copycats**, **2.3.1 Accurate Metadata** (no hidden features), **3.1.1 In-App
+  Purchase** (unlocks must use Apple IAP) round out the closed list.
 - **Q2 is the most important signal.** Q5 native features (camera, IAP, offline…) count in
-  the app's favor.
+  the app's favor against 4.2.
 
 ## Layout
 
 - `app/page.tsx` — client state machine + header/footer + loading/error states
 - `app/api/check/route.ts` — server-side Anthropic call, JSON-schema output, validation
-- `components/` — `Questionnaire`, `RiskReport`, `RiskBadge`, `Spinner`
+- `components/` — `StoreHeader`, `Questionnaire`, `RiskReport`, `Carousel` (screenshot
+  gallery), `AppIcon` (squircle), `MetaStrip` (App Store rating row), `Spinner`. The UI is
+  an App Store product-page pastiche: listing chrome + the questions and the result's risks
+  rendered as a swipeable "screenshot" gallery.
 - `lib/types.ts` — shared types + questionnaire option lists (single source of truth)
 - `lib/prompt.ts` — the verbatim system prompt
 - `app/globals.css` — Tailwind v4 `@theme` design tokens (dark, risk-color accents,

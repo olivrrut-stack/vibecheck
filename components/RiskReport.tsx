@@ -1,5 +1,37 @@
-import type { Diagnosis } from "@/lib/types";
-import RiskBadge from "./RiskBadge";
+import type { Diagnosis, RiskLevel } from "@/lib/types";
+import AppIcon, { NEUTRAL_GRADIENT } from "./AppIcon";
+import Carousel from "./Carousel";
+import MetaStrip from "./MetaStrip";
+import ScreenshotCard from "./ScreenshotCard";
+
+// The result renders as a mock App Store listing for the developer's own app:
+// their "product header" with the verdict where the Get button lives, the rating
+// strip repurposed as a risk summary, the risks as a swipeable "App Review
+// Notes" gallery, and the verdict paragraph as the app description.
+
+const VERDICT: Record<
+  RiskLevel,
+  { pill: string; short: string; color: string; onColor: string }
+> = {
+  HIGH: {
+    pill: "Likely Rejected",
+    short: "HIGH",
+    color: "var(--color-risk-high)",
+    onColor: "#ffffff",
+  },
+  MEDIUM: {
+    pill: "Needs Work",
+    short: "MEDIUM",
+    color: "var(--color-risk-medium)",
+    onColor: "#0a0a0b",
+  },
+  LOW: {
+    pill: "Looks Clear",
+    short: "LOW",
+    color: "var(--color-risk-low)",
+    onColor: "#0a0a0b",
+  },
+};
 
 // Pull a leading "Guideline X.Y" token out so we can set it in mono — the
 // guideline number is a real clause reference, so it earns the structural face.
@@ -9,6 +41,11 @@ function splitGuideline(guideline: string): { tag: string; rest: string } {
   return { tag: "", rest: guideline };
 }
 
+// Just the clause number ("4.2") for the rating-strip "top issue" cell.
+function guidelineNumber(guideline: string): string {
+  return guideline.match(/(\d+(?:\.\d+)*)/)?.[1] ?? "—";
+}
+
 export default function RiskReport({
   diagnosis,
   onReset,
@@ -16,62 +53,88 @@ export default function RiskReport({
   diagnosis: Diagnosis;
   onReset: () => void;
 }) {
+  const v = VERDICT[diagnosis.riskLevel];
+  const count = diagnosis.risks.length;
+  const topIssue = count > 0 ? guidelineNumber(diagnosis.risks[0].guideline) : "—";
+
+  const noteCards = diagnosis.risks.map((risk) => {
+    const { tag, rest } = splitGuideline(risk.guideline);
+    return (
+      <ScreenshotCard key={risk.guideline + risk.reason.slice(0, 16)} eyebrow={tag || "Guideline"} accent={v.color}>
+        <h4 className="text-lg font-bold leading-tight text-ink">
+          {rest || risk.guideline}
+        </h4>
+        <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+          {risk.reason}
+        </p>
+        <div className="mt-auto pt-5">
+          <div className="rounded-lg border border-line bg-surface-2 p-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-muted">
+              The fix
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-ink">{risk.fix}</p>
+          </div>
+        </div>
+      </ScreenshotCard>
+    );
+  });
+
   return (
     <div className="space-y-8">
-      <div className="vc-rise">
-        <RiskBadge level={diagnosis.riskLevel} />
-      </div>
+      {/* Product header for "their app", with the verdict as the Get button. */}
+      <header className="vc-rise">
+        <div className="flex items-start gap-4 sm:gap-5">
+          <AppIcon gradient={NEUTRAL_GRADIENT} size="lg">
+            <span className="text-3xl font-bold text-ink-muted">?</span>
+          </AppIcon>
+          <div className="min-w-0 flex-1 pt-0.5">
+            <h2 className="truncate text-xl font-bold tracking-tight text-ink sm:text-2xl">
+              Your App
+            </h2>
+            <p className="mt-0.5 truncate text-sm text-ink-muted">
+              Submitted via VibeCheck
+            </p>
+            <div className="mt-3">
+              <span
+                className="inline-flex rounded-full px-5 py-1.5 text-sm font-semibold"
+                style={{ backgroundColor: v.color, color: v.onColor }}
+              >
+                {v.pill}
+              </span>
+            </div>
+          </div>
+        </div>
 
-      {diagnosis.risks.length > 0 && (
-        <section className="space-y-4">
-          <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
-            Rejection risks · {diagnosis.risks.length}
-          </h3>
-          <ul className="space-y-4">
-            {diagnosis.risks.map((risk, i) => {
-              const { tag, rest } = splitGuideline(risk.guideline);
-              return (
-                <li
-                  key={`${i}-${risk.guideline}`}
-                  className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 sm:p-6"
-                  style={{ animationDelay: `${0.05 * (i + 1)}s` }}
-                >
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    {tag && (
-                      <span className="font-mono text-sm font-medium text-ink">
-                        {tag}
-                      </span>
-                    )}
-                    <span className="text-base font-bold text-ink sm:text-lg">
-                      {rest || risk.guideline}
-                    </span>
-                  </div>
+        {/* Rating strip, repurposed: risk level / flag count / top clause. */}
+        <div className="mt-5 border-y border-line py-4">
+          <MetaStrip
+            cells={[
+              { value: <span style={{ color: v.color }}>{v.short}</span>, label: "Risk Level" },
+              { value: String(count), label: count === 1 ? "Flag" : "Flags" },
+              { value: topIssue, label: "Top Issue" },
+            ]}
+          />
+        </div>
+      </header>
 
-                  <p className="mt-3 text-sm leading-relaxed text-ink-muted sm:text-[15px]">
-                    {risk.reason}
-                  </p>
+      {/* App Review Notes — the specific guideline risks, as a screenshot gallery. */}
+      <section>
+        <h3 className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+          App Review Notes{count > 0 ? ` · ${count}` : ""}
+        </h3>
+        {count > 0 ? (
+          <Carousel items={noteCards} unitLabel="Note" ariaLabel="App review notes" />
+        ) : (
+          <div className="rounded-[28px] border border-line bg-surface p-6 text-sm leading-relaxed text-ink-muted">
+            No specific guideline citations were generated — see the verdict below.
+          </div>
+        )}
+      </section>
 
-                  <div className="mt-4 rounded-lg border border-line bg-surface-2 p-4">
-                    <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
-                      The fix
-                    </p>
-                    <p className="mt-1.5 text-sm leading-relaxed text-ink">
-                      {risk.fix}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-
-      <section
-        className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 sm:p-6"
-        style={{ animationDelay: `${0.05 * (diagnosis.risks.length + 1)}s` }}
-      >
+      {/* App description = the reviewer's plain-English verdict. */}
+      <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 sm:p-6">
         <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
-          The verdict
+          Reviewer&rsquo;s verdict
         </h3>
         <p className="mt-3 text-[15px] leading-relaxed text-ink sm:text-base">
           {diagnosis.verdict}
@@ -82,7 +145,7 @@ export default function RiskReport({
         <button
           type="button"
           onClick={onReset}
-          className="w-full rounded-xl border border-line-strong bg-surface px-6 py-3.5 text-sm font-medium text-ink transition-colors hover:bg-surface-2 sm:w-auto"
+          className="w-full rounded-full border border-line-strong bg-surface px-6 py-3.5 text-sm font-medium text-ink transition-colors hover:bg-surface-2 sm:w-auto"
         >
           Check another app
         </button>
