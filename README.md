@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VibeCheck
 
-## Getting Started
+**Find out if your AI-built app will get rejected before Apple does.**
 
-First, run the development server:
+A free, no-account web app that estimates your App Store rejection risk. Answer 5 questions
+about your app and Claude returns a risk score, the specific Apple guidelines you're likely to
+hit, and the exact fixes — in plain English. Built for developers shipping apps from Cursor,
+Lovable, Bolt, Claude Code, and Replit.
+
+It focuses on the judgment calls that actually sink AI-built apps — **Guideline 4.3**
+(minimum functionality / "does this deserve to be a native app?") and **Guideline 2.5.2**
+(running code Apple didn't review) — not just code-level checks.
+
+## Tech stack
+
+- Next.js 16 (App Router) + TypeScript
+- Tailwind CSS v4
+- Anthropic API via `@anthropic-ai/sdk` (model: `claude-sonnet-4-6`), called server-side only
+- No database — stateless, no accounts
+
+## Local setup
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Add your Anthropic API key to `.env.local` (the file is already created with a placeholder
+   and is gitignored). Get a key at https://console.anthropic.com/settings/keys:
+   ```
+   ANTHROPIC_API_KEY=sk-ant-...
+   ```
+3. Run the dev server:
+   ```bash
+   npm run dev
+   ```
+   Open http://localhost:3000.
+
+> The key is read **server-side only** in `app/api/check/route.ts` and never reaches the
+> browser. There is no key input in the UI by design.
+
+## How it works
+
+`app/page.tsx` is a small state machine: questionnaire → loading → report (or error). On
+submit it POSTs the answers to `app/api/check/route.ts`, which calls Claude with a fixed
+expert system prompt (`lib/prompt.ts`) and a JSON-schema-constrained output, then returns
+`{ riskLevel, risks[], verdict }` for the report screen.
+
+**Note:** every check is one paid Anthropic API call billed to your key.
+
+## Build
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build   # production build + type-check + lint
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy to Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Push this repo to GitHub and import it at https://vercel.com/new (or run `vercel`).
+2. In the Vercel project's **Settings → Environment Variables**, add `ANTHROPIC_API_KEY` with
+   your key (Production + Preview).
+3. Deploy. No other configuration needed — there's no database or backend to provision.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For your own use. Not affiliated with Apple. VibeCheck gives an informed estimate and does not
+guarantee approval or rejection — always read the
+[App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/).

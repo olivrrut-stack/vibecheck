@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  VibeCheck design system — dark, serious, developer-focused (Linear energy).
+  Saturation is reserved for the three risk colors so the verdict pops; the
+  rest of the UI stays monochrome. Geist Mono carries the structural layer
+  (guideline numbers, question labels) because Apple's guidelines are a
+  numbered clause system — the mono numbering encodes meaning, not decoration.
+*/
+
+@theme {
+  --color-canvas: #0a0a0b;
+  --color-surface: #141417;
+  --color-surface-2: #1a1a1e;
+  --color-line: #26262b;
+  --color-line-strong: #34343b;
+  --color-ink: #ececee;
+  --color-ink-muted: #8a8a93;
+  --color-ink-faint: #5d5d66;
+
+  --color-risk-high: #f0506e;
+  --color-risk-medium: #e8b23a;
+  --color-risk-low: #37c871;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-card: 14px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--color-canvas);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  /* Ambient atmosphere: a single faint glow behind the page, nothing busy. */
+  background-image: radial-gradient(
+    900px 500px at 50% -10%,
+    rgba(120, 130, 160, 0.07),
+    transparent 70%
+  );
+  background-repeat: no-repeat;
+}
+
+/* Visible, on-brand keyboard focus everywhere. The outline follows the
+   element's own border-radius, so don't override the radius here. */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(236, 236, 238, 0.18);
+}
+
+@keyframes vc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes vc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vc-rise {
+  animation: vc-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.vc-spin {
+  animation: vc-spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-rise {
+    animation: none;
+  }
+  /* Keep a slow rotation as a "working" cue without the fast spin. */
+  .vc-spin {
+    animation-duration: 1.6s;
+  }
 }
