@@ -182,7 +182,7 @@ export default function Questionnaire({
         rows={5}
         maxLength={4000}
         placeholder="e.g. it uses the camera, works offline, sends push notifications, accesses health data…"
-        className="w-full flex-1 resize-none rounded-lg border border-line-strong bg-canvas px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-ink"
+        className="w-full flex-1 resize-none rounded-lg border border-line-strong bg-surface-2 px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-accent"
       />
     </QuestionCard>,
 

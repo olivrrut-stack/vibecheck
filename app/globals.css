@@ -32,6 +32,10 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   --radius-card: 14px;
+
+  /* Shared lift for answer/result cards so they read clearly off the white
+     page: a crisp edge plus a soft ambient shadow. Subtle, not heavy. */
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.06), 0 14px 30px -14px rgb(0 0 0 / 0.16);
 }
 
 html {

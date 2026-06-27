@@ -112,7 +112,7 @@ export default function Home() {
       )}
 
       {status === "loading" && (
-        <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-line bg-surface px-6 py-20 text-center">
+        <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-line bg-surface px-6 py-20 text-center shadow-card">
           <Spinner className="h-7 w-7" />
           <p className="mt-5 text-base font-medium text-ink">
             Submitting your app for review…
@@ -128,7 +128,7 @@ export default function Home() {
       )}
 
       {status === "error" && (
-        <div className="rounded-[var(--radius-card)] border border-line bg-surface px-6 py-16 text-center">
+        <div className="rounded-[var(--radius-card)] border border-line bg-surface px-6 py-16 text-center shadow-card">
           <p className="text-base font-medium text-ink">Couldn&rsquo;t finish the review.</p>
           <p className="mx-auto mt-2 max-w-sm text-sm text-ink-muted">
             {errorMsg ??

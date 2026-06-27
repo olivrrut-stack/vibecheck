@@ -14,7 +14,7 @@ export default function ScreenshotCard({
   children: ReactNode;
 }) {
   return (
-    <div className="flex h-full min-h-[516px] flex-col overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.04),0_18px_36px_-20px_rgba(0,0,0,0.25)]">
+    <div className="flex h-full min-h-[516px] flex-col overflow-hidden rounded-[28px] border border-line bg-surface shadow-card">
       {/* Faux iOS status bar. */}
       <div className="flex items-center justify-between px-5 pt-3 text-ink-faint">
         <span className="font-mono text-[11px] font-medium tabular-nums">9:41</span>
