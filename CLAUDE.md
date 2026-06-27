@@ -21,6 +21,11 @@ Two UI states, one page (`app/page.tsx` state machine): `idle` (questionnaire) â
   **never** reach the browser. There is intentionally no key input in the UI.
 - **Each "Check my app" is one paid API call** billed to whoever owns the key. Keep that in
   mind before exposing this publicly.
+- **Rate limiting** (`lib/ratelimit.ts`) caps each IP at `RATE_LIMIT` (3) checks/hour before
+  the paid call. It uses Upstash Redis when `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`
+  (or the `KV_REST_API_*` pair) are set, else an in-memory fallback (per-instance, weaker on
+  serverless). Each check logs a usage line; with Redis it also increments a daily
+  `vibecheck:checks:<date>` counter. Set the Upstash env vars in Vercel for real protection.
 - **The system prompt is product-critical** â€” it's the verbatim reviewer-expert prompt in
   `lib/prompt.ts`. Edit deliberately and keep the strict JSON output contract
   `{ riskLevel, risks[], verdict }`. The API route enforces that shape via

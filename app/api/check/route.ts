@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/prompt";
+import { RATE_LIMIT, checkRateLimit, recordUsage } from "@/lib/ratelimit";
 import type { Answers, Diagnosis, RiskLevel } from "@/lib/types";
 
 // The diagnosis is written by Claude on every request, server-side only.
@@ -128,6 +129,24 @@ export async function POST(req: Request) {
     );
   }
 
+  // One paid Anthropic call per check, so cap how many a single IP can run.
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "anon";
+  const rate = await checkRateLimit(ip);
+  if (!rate.ok) {
+    const mins = Math.max(1, Math.ceil(rate.resetSeconds / 60));
+    return NextResponse.json(
+      {
+        error: `You've hit the limit of ${RATE_LIMIT} checks per hour. Try again in about ${mins} minute${
+          mins === 1 ? "" : "s"
+        }.`,
+      },
+      { status: 429, headers: { "Retry-After": String(rate.resetSeconds || 3600) } }
+    );
+  }
+
   try {
     const client = new Anthropic({ apiKey });
 
@@ -176,6 +195,16 @@ export async function POST(req: Request) {
     if (!isValidDiagnosis(parsed)) {
       throw new Error("Model returned an unexpected shape");
     }
+
+    // Usage visibility: a log line per check (Vercel function logs) plus a
+    // durable daily counter when Redis is configured.
+    console.log("[VibeCheck] check", {
+      backend: rate.backend,
+      remaining: rate.remaining,
+      riskLevel: parsed.riskLevel,
+      score: parsed.score,
+    });
+    await recordUsage(new Date().toISOString().slice(0, 10));
 
     return NextResponse.json(parsed satisfies Diagnosis);
   } catch (err) {
