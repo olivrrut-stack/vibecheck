@@ -9,13 +9,15 @@ export default function StoreHeader() {
     <header>
       <div className="flex items-start gap-4 sm:gap-5">
         <AppIcon gradient={VIBE_GRADIENT} size="lg">
-          {/* Brand check mark, drawn so it matches the favicon exactly. */}
-          <svg viewBox="0 0 24 24" className="h-10 w-10" aria-hidden>
+          {/* White phone with a notch and a blue check, matching the favicon. */}
+          <svg viewBox="0 0 44 64" className="h-16" aria-hidden>
+            <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
+            <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
             <path
-              d="M5 12.5l4.5 4.5L19 7.5"
+              d="M14 33l7 7 13-15.5"
               fill="none"
-              stroke="white"
-              strokeWidth="2.6"
+              stroke="#0a6cff"
+              strokeWidth="5.2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />

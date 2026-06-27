@@ -36,11 +36,13 @@ export default function OpengraphImage() {
                 "linear-gradient(160deg, #4aa3ff 0%, #0a84ff 50%, #0050d6 100%)",
             }}
           >
-            <svg width="68" height="68" viewBox="0 0 24 24" fill="none">
+            <svg width="58" height="84" viewBox="0 0 44 64" fill="none">
+              <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
+              <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
               <path
-                d="M5 12.5l4.5 4.5L19 7.5"
-                stroke="white"
-                strokeWidth="2.6"
+                d="M14 33l7 7 13-15.5"
+                stroke="#0a6cff"
+                strokeWidth="5.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />

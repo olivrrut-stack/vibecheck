@@ -68,12 +68,14 @@ export default function Home() {
       {status !== "idle" && (
         <div className="mb-8 flex items-center gap-2.5">
           <AppIcon gradient={VIBE_GRADIENT} size="sm">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+            <svg viewBox="0 0 44 64" className="h-7" aria-hidden>
+              <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
+              <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
               <path
-                d="M5 12.5l4.5 4.5L19 7.5"
+                d="M14 33l7 7 13-15.5"
                 fill="none"
-                stroke="white"
-                strokeWidth="2.8"
+                stroke="#0a6cff"
+                strokeWidth="5.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />

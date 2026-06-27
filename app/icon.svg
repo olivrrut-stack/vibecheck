@@ -7,5 +7,7 @@
     </linearGradient>
   </defs>
   <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#vibe)"/>
-  <path d="M18 33l9 9 19-20" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="17" y="10" width="30" height="44" rx="7" fill="#ffffff"/>
+  <rect x="26" y="13.5" width="12" height="2.8" rx="1.4" fill="#0a0a0b"/>
+  <path d="M24 33l5 5 10-12" stroke="#0a6cff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>
