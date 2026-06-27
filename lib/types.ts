@@ -6,8 +6,8 @@ export type RiskLevel = "HIGH" | "MEDIUM" | "LOW";
 export type DownloadsCode = "Yes" | "No" | "I'm not sure";
 
 export type WebViewShell =
-  | "Yes it's basically a website in a shell"
-  | "No it's fully native"
+  | "Yes, it's a website in a shell"
+  | "No, it's fully native"
   | "I'm not sure";
 
 export interface Answers {
@@ -43,10 +43,10 @@ export interface Diagnosis {
 // ---- Questionnaire option lists (single source of truth for the UI) ----
 
 export const DATA_PRACTICES = [
-  "Collects personal data (email, location, health…)",
-  "Has user accounts or login",
+  "Collects personal data (email, location…)",
+  "Has accounts or login",
   "Has a privacy policy",
-  "Lets users delete their account or data",
+  "Users can delete their data",
   "None of these",
 ] as const;
 
@@ -57,16 +57,16 @@ export const DOWNLOADS_CODE_OPTIONS: DownloadsCode[] = [
 ];
 
 export const WEBVIEW_OPTIONS: WebViewShell[] = [
-  "Yes it's basically a website in a shell",
-  "No it's fully native",
+  "Yes, it's a website in a shell",
+  "No, it's fully native",
   "I'm not sure",
 ];
 
 export const NATIVE_FEATURES = [
   "Camera or microphone",
   "Push notifications",
-  "Works offline without internet",
-  "In-app purchases (Apple IAP)",
+  "Works offline",
+  "In-app purchases",
   "Location or health data",
   "Face ID or Touch ID",
   "None of these",

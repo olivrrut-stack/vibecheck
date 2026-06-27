@@ -154,7 +154,7 @@ export default function Questionnaire({
     <QuestionCard
       key="q1"
       index={1}
-      title="Does your app collect personal data or have user accounts?"
+      title="Does your app collect data or have accounts?"
       footer="Probes Guideline 5.1.1, privacy and data."
     >
       {DATA_PRACTICES.map((practice) => (
@@ -172,8 +172,8 @@ export default function Questionnaire({
     <QuestionCard
       key="q2"
       index={2}
-      title="What does your app do that someone couldn't just do in Safari?"
-      hint="“It looks nice” or “it’s easy to use” aren’t valid answers. Apple wants to know why it has to be a native app and not just a website."
+      title="What can your app do that a website can't?"
+      hint="“Looks nice” or “easy to use” don’t count. Apple wants a real reason it must be native."
       footer={q2Footer}
     >
       <textarea
@@ -189,7 +189,7 @@ export default function Questionnaire({
     <QuestionCard
       key="q3"
       index={3}
-      title="Does your app download or execute any code from the internet while it’s running?"
+      title="Does your app download or run code from the internet?"
       footer="Probes Guideline 2.5.2, code execution. “Yes” is a blocker."
     >
       {DOWNLOADS_CODE_OPTIONS.map((opt) => (
@@ -209,7 +209,7 @@ export default function Questionnaire({
     <QuestionCard
       key="q4"
       index={4}
-      title="Is your app’s main screen a website or web content loaded inside the app?"
+      title="Is your main screen a website inside the app?"
       footer="Probes Guideline 4.2, the web-wrapper test."
     >
       {WEBVIEW_OPTIONS.map((opt) => (
@@ -229,7 +229,7 @@ export default function Questionnaire({
     <QuestionCard
       key="q5"
       index={5}
-      title="Which of these does your app actually use?"
+      title="Which of these does your app use?"
       footer="Real native features count in your favor against 4.2."
     >
       {NATIVE_FEATURES.map((feature) => (
