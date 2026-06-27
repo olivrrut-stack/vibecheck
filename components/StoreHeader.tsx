@@ -29,19 +29,16 @@ export default function StoreHeader() {
           <p className="mt-0.5 text-sm text-accent">
             App Store Rejection Risk Checker
           </p>
-          <div className="mt-3 flex items-center gap-3">
-            <span className="rounded-full bg-accent px-5 py-1.5 text-sm font-semibold text-white">
+          <div className="mt-3">
+            <span className="inline-flex rounded-full bg-accent px-6 py-1.5 text-sm font-semibold text-white">
               FREE
-            </span>
-            <span className="font-mono text-xs uppercase tracking-[0.14em] text-ink-faint">
-              No in-app purchases
             </span>
           </div>
         </div>
       </div>
 
-      <p className="mt-5 text-[15px] leading-snug text-ink sm:text-base">
-        Find out if your AI-built app will get rejected — before Apple does.
+      <p className="mt-5 max-w-xl text-[15px] leading-snug text-ink sm:text-base">
+        Know what Apple will flag, while every fix still takes minutes.
       </p>
 
       <div className="mt-5 border-y border-line py-4">

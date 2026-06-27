@@ -51,4 +51,4 @@ export default function AppIcon({
 export const VIBE_GRADIENT =
   "linear-gradient(160deg, #4aa3ff 0%, #0a84ff 50%, #0050d6 100%)";
 export const NEUTRAL_GRADIENT =
-  "linear-gradient(150deg, #3a3a42 0%, #26262b 100%)";
+  "linear-gradient(150deg, #c4c4ca 0%, #a6a6ae 100%)";

@@ -16,14 +16,14 @@ export interface MetaCell {
 export default function MetaStrip({ cells }: { cells: MetaCell[] }) {
   return (
     <div
-      className="flex items-stretch overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="flex w-full items-stretch overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       role="list"
     >
       {cells.map((cell, i) => (
         <div
           key={i}
           role="listitem"
-          className={`flex min-w-0 shrink-0 flex-col items-center justify-center px-5 text-center first:pl-0 last:pr-0 ${
+          className={`flex min-w-[60px] flex-1 flex-col items-center justify-center px-2 text-center first:pl-0 last:pr-0 ${
             i > 0 ? "border-l border-line" : ""
           }`}
         >

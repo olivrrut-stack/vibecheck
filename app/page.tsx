@@ -61,7 +61,7 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-8 sm:px-6 sm:py-12">
+    <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-14">
       {/* Slim brand bar — keeps the user oriented once the main panel stops
           being VibeCheck's own listing. On idle, the full StoreHeader carries
           the branding, so the bar would just double it. */}
@@ -130,7 +130,7 @@ export default function Home() {
           <p className="text-base font-medium text-ink">Couldn&rsquo;t finish the review.</p>
           <p className="mx-auto mt-2 max-w-sm text-sm text-ink-muted">
             {errorMsg ??
-              "We couldn't analyze your app just now. Your answers are still here — give it another try."}
+              "We couldn't analyze your app just now. Your answers are still here, so give it another try."}
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
@@ -152,8 +152,8 @@ export default function Home() {
       )}
 
       <footer className="mt-16 border-t border-line pt-6">
-        <p className="text-xs leading-relaxed text-ink-faint">
-          VibeCheck gives an informed risk estimate based on your answers — it
+        <p className="max-w-2xl text-xs leading-relaxed text-ink-faint">
+          VibeCheck gives an informed risk estimate based on your answers. It
           isn&rsquo;t affiliated with Apple and doesn&rsquo;t guarantee approval
           or rejection. Always read the{" "}
           <a

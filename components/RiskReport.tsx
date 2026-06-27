@@ -23,27 +23,27 @@ const VERDICT: Record<
     pill: "Needs Work",
     short: "MEDIUM",
     color: "var(--color-risk-medium)",
-    onColor: "#0a0a0b",
+    onColor: "#ffffff",
   },
   LOW: {
     pill: "Looks Clear",
     short: "LOW",
     color: "var(--color-risk-low)",
-    onColor: "#0a0a0b",
+    onColor: "#ffffff",
   },
 };
 
 // Pull a leading "Guideline X.Y" token out so we can set it in mono — the
 // guideline number is a real clause reference, so it earns the structural face.
 function splitGuideline(guideline: string): { tag: string; rest: string } {
-  const match = guideline.match(/^(Guideline\s+[\d.]+)\s*[—-]?\s*(.*)$/i);
+  const match = guideline.match(/^(Guideline\s+[\d.]+)\s*[:—-]?\s*(.*)$/i);
   if (match) return { tag: match[1], rest: match[2] };
   return { tag: "", rest: guideline };
 }
 
 // Just the clause number ("4.2") for the rating-strip "top issue" cell.
 function guidelineNumber(guideline: string): string {
-  return guideline.match(/(\d+(?:\.\d+)*)/)?.[1] ?? "—";
+  return guideline.match(/(\d+(?:\.\d+)*)/)?.[1] ?? "?";
 }
 
 export default function RiskReport({
@@ -55,7 +55,7 @@ export default function RiskReport({
 }) {
   const v = VERDICT[diagnosis.riskLevel];
   const count = diagnosis.risks.length;
-  const topIssue = count > 0 ? guidelineNumber(diagnosis.risks[0].guideline) : "—";
+  const topIssue = count > 0 ? guidelineNumber(diagnosis.risks[0].guideline) : "None";
 
   const noteCards = diagnosis.risks.map((risk) => {
     const { tag, rest } = splitGuideline(risk.guideline);
@@ -85,7 +85,7 @@ export default function RiskReport({
       <header className="vc-rise">
         <div className="flex items-start gap-4 sm:gap-5">
           <AppIcon gradient={NEUTRAL_GRADIENT} size="lg">
-            <span className="text-3xl font-bold text-ink-muted">?</span>
+            <span className="text-3xl font-bold text-white">?</span>
           </AppIcon>
           <div className="min-w-0 flex-1 pt-0.5">
             <h2 className="truncate text-xl font-bold tracking-tight text-ink sm:text-2xl">
@@ -126,7 +126,7 @@ export default function RiskReport({
           <Carousel items={noteCards} unitLabel="Note" ariaLabel="App review notes" />
         ) : (
           <div className="rounded-[28px] border border-line bg-surface p-6 text-sm leading-relaxed text-ink-muted">
-            No specific guideline citations were generated — see the verdict below.
+            No specific guideline citations were generated. See the verdict below.
           </div>
         )}
       </section>

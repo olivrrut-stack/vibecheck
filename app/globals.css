@@ -9,22 +9,24 @@
 */
 
 @theme {
-  --color-canvas: #0a0a0b;
-  --color-surface: #141417;
-  --color-surface-2: #1a1a1e;
-  --color-line: #26262b;
-  --color-line-strong: #34343b;
-  --color-ink: #ececee;
-  --color-ink-muted: #8a8a93;
-  --color-ink-faint: #71717a;
+  /* Light "App Store" palette: white page, white cards separated by hairlines
+     and soft shadow, Apple-style near-black ink. */
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-2: #f2f2f5;
+  --color-line: #e4e4e8;
+  --color-line-strong: #cdcdd3;
+  --color-ink: #1d1d1f;
+  --color-ink-muted: #515156;
+  --color-ink-faint: #6e6e73;
 
-  /* Apple system blue (dark appearance) — the App Store "Get" / link accent.
+  /* Apple system blue (light appearance): the App Store "Get" / link accent.
      Reserved for the listing chrome so it reads unmistakably as the Store. */
-  --color-accent: #0a84ff;
+  --color-accent: #0071e3;
 
-  --color-risk-high: #f0506e;
-  --color-risk-medium: #e8b23a;
-  --color-risk-low: #37c871;
+  --color-risk-high: #e11d48;
+  --color-risk-medium: #b45309;
+  --color-risk-low: #15803d;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
@@ -34,31 +36,24 @@
 
 html {
   background-color: var(--color-canvas);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  /* Ambient atmosphere: a single faint glow behind the page, nothing busy. */
-  background-image: radial-gradient(
-    900px 500px at 50% -10%,
-    rgba(120, 130, 160, 0.07),
-    transparent 70%
-  );
-  background-repeat: no-repeat;
 }
 
 /* Visible, on-brand keyboard focus everywhere. The outline follows the
    element's own border-radius, so don't override the radius here. */
 :focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: rgba(236, 236, 238, 0.18);
+  background: rgba(0, 113, 227, 0.16);
 }
 
 @keyframes vc-spin {

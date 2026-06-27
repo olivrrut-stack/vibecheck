@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 // Resolves relative OG/icon URLs. Override with NEXT_PUBLIC_SITE_URL in prod.
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-const title = "VibeCheck — App Store rejection risk checker";
+const title = "VibeCheck: App Store rejection risk checker";
 const description =
   "Find out if your AI-built app will get rejected before Apple does. Free, no account. Built for Cursor, Lovable, Bolt, and Claude Code users.";
 

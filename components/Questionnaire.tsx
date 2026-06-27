@@ -126,7 +126,7 @@ export default function Questionnaire({
       key="q1"
       index={1}
       title="How did you build your app?"
-      footer="Context for your review — not scored on its own."
+      footer="Context for your review. Not scored on its own."
     >
       {BUILD_TOOLS.map((tool) => (
         <OptionRow
@@ -161,7 +161,7 @@ export default function Questionnaire({
       key="q3"
       index={3}
       title="Does your app download or execute any code from the internet while it’s running?"
-      footer="Probes Guideline 2.5.2 — code execution. “Yes” is a blocker."
+      footer="Probes Guideline 2.5.2, code execution. “Yes” is a blocker."
     >
       {DOWNLOADS_CODE_OPTIONS.map((opt) => (
         <OptionRow
@@ -181,7 +181,7 @@ export default function Questionnaire({
       key="q4"
       index={4}
       title="Is your app’s main screen a website or web content loaded inside the app?"
-      footer="Probes Guideline 4.2 — the web-wrapper test."
+      footer="Probes Guideline 4.2, the web-wrapper test."
     >
       {WEBVIEW_OPTIONS.map((opt) => (
         <OptionRow
@@ -225,7 +225,7 @@ export default function Questionnaire({
     >
       <Carousel items={cards} unitLabel="Question" ariaLabel="App questions" />
 
-      <div className="mt-7">
+      <div className="mx-auto mt-7 max-w-md">
         <button
           type="submit"
           disabled={!canSubmit}
@@ -235,7 +235,7 @@ export default function Questionnaire({
         </button>
         {!canSubmit && (
           <p className="mt-2.5 text-center text-xs text-ink-faint">
-            Answer Question 2 to run the check — it’s the one Apple cares about
+            Answer Question 2 to run the check. It’s the one Apple cares about
             most.
           </p>
         )}

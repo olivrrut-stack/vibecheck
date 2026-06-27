@@ -24,7 +24,7 @@ export interface Answers {
 }
 
 export interface Risk {
-  /** e.g. "Guideline 4.3 — Minimum Functionality" */
+  /** e.g. "Guideline 4.2: Minimum Functionality" */
   guideline: string;
   /** Why their specific answers triggered this risk. */
   reason: string;
