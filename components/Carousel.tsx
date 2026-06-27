@@ -120,31 +120,23 @@ export default function Carousel({
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <span
-            aria-live="polite"
-            className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-muted tabular-nums"
-          >
-            {unitLabel} {active + 1} / {count}
-          </span>
-          {active < count - 1 && (
-            <span className="flex items-center gap-1.5 text-ink-faint" aria-hidden>
-              <svg viewBox="0 0 24 24" className="vc-swipe h-4 w-4">
-                <path
-                  d="M4 12h16M9 7l-5 5 5 5M15 7l5 5-5 5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
-                Swipe
-              </span>
+        {active < count - 1 && (
+          <span className="flex items-center gap-1.5 text-ink-faint" aria-hidden>
+            <svg viewBox="0 0 24 24" className="vc-swipe h-4 w-4">
+              <path
+                d="M4 12h16M9 7l-5 5 5 5M15 7l5 5-5 5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
+              Swipe
             </span>
-          )}
-        </div>
+          </span>
+        )}
       </div>
     </div>
   );
