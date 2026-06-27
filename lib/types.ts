@@ -11,8 +11,8 @@ export type WebViewShell =
   | "I'm not sure";
 
 export interface Answers {
-  /** Q1 — how the app was built (multi-select). */
-  buildTools: string[];
+  /** Q1 — data collection / accounts (multi-select). Drives Guideline 5.1.1. */
+  dataPractices: string[];
   /** Q2 — what the app does that Safari can't. The most important signal. */
   safariDiff: string;
   /** Q3 — downloads/executes code at runtime. */
@@ -34,20 +34,20 @@ export interface Risk {
 
 export interface Diagnosis {
   riskLevel: RiskLevel;
+  /** 0 (certain approval) to 100 (certain rejection). Tracks riskLevel. */
+  score: number;
   risks: Risk[];
   verdict: string;
 }
 
 // ---- Questionnaire option lists (single source of truth for the UI) ----
 
-export const BUILD_TOOLS = [
-  "Cursor",
-  "Lovable",
-  "Bolt.new",
-  "Claude Code",
-  "Replit",
-  "Other AI tool",
-  "Traditional coding (no AI)",
+export const DATA_PRACTICES = [
+  "Collects personal data (email, location, health…)",
+  "Has user accounts or login",
+  "Has a privacy policy",
+  "Lets users delete their account or data",
+  "None of these",
 ] as const;
 
 export const DOWNLOADS_CODE_OPTIONS: DownloadsCode[] = [

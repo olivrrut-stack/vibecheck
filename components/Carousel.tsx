@@ -19,6 +19,7 @@ export default function Carousel({
   unitLabel,
   ariaLabel,
   itemClassName = "w-[80vw] max-w-[300px] sm:w-[300px]",
+  answered,
 }: {
   items: ReactNode[];
   /** Singular noun for the position read-out, e.g. "Question" or "Note". */
@@ -26,6 +27,8 @@ export default function Carousel({
   ariaLabel: string;
   /** Width sizing for each card slot. */
   itemClassName?: string;
+  /** Per-item completion state; answered items get a green dot. */
+  answered?: boolean[];
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -74,9 +77,6 @@ export default function Carousel({
     track.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
   }, []);
 
-  const go = (delta: number) =>
-    scrollToIndex(Math.min(count - 1, Math.max(0, active + delta)));
-
   return (
     <div>
       <div
@@ -108,9 +108,13 @@ export default function Carousel({
               aria-label={`Go to ${unitLabel.toLowerCase()} ${i + 1}`}
               onClick={() => scrollToIndex(i)}
               className={`h-2 rounded-full transition-all ${
-                i === active
-                  ? "w-5 bg-ink"
-                  : "w-2 bg-line-strong hover:bg-ink-muted"
+                i === active ? "w-5" : "w-2"
+              } ${
+                answered?.[i]
+                  ? "bg-risk-low"
+                  : i === active
+                    ? "bg-ink"
+                    : "bg-line-strong hover:bg-ink-muted"
               }`}
             />
           ))}
@@ -123,30 +127,23 @@ export default function Carousel({
           >
             {unitLabel} {active + 1} / {count}
           </span>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => go(-1)}
-              disabled={active === 0}
-              aria-label={`Previous ${unitLabel.toLowerCase()}`}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-line-strong text-ink transition-colors hover:bg-surface-2 disabled:opacity-30 disabled:hover:bg-transparent"
-            >
-              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-                <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          {active < count - 1 && (
+            <span className="flex items-center gap-1.5 text-ink-faint" aria-hidden>
+              <svg viewBox="0 0 24 24" className="vc-swipe h-4 w-4">
+                <path
+                  d="M4 12h16M9 7l-5 5 5 5M15 7l5 5-5 5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => go(1)}
-              disabled={active === count - 1}
-              aria-label={`Next ${unitLabel.toLowerCase()}`}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-line-strong text-ink transition-colors hover:bg-surface-2 disabled:opacity-30 disabled:hover:bg-transparent"
-            >
-              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-                <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
+                Swipe
+              </span>
+            </span>
+          )}
         </div>
       </div>
     </div>

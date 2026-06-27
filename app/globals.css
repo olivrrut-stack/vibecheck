@@ -81,8 +81,26 @@ body {
   animation: vc-spin 0.7s linear infinite;
 }
 
+/* Gentle side-to-side nudge for the "swipe" hint on the gallery. */
+@keyframes vc-swipe {
+  0%,
+  100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+.vc-swipe {
+  animation: vc-swipe 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .vc-rise {
+    animation: none;
+  }
+  .vc-swipe {
     animation: none;
   }
   /* Keep a slow rotation as a "working" cue without the fast spin. */

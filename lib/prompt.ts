@@ -15,6 +15,7 @@ Assess risk using ONLY these real guidelines. Always cite them by their exact nu
 - Guideline 3.1.1: In-App Purchase. Unlocking features or content must use Apple's in-app purchase, not external keys, links, or other mechanisms.
 
 How to weigh the answers:
+- Q1 (data and accounts): if the app collects personal data or has accounts without a privacy policy or a way to delete the account, flag 5.1.1. If it collects nothing, 5.1.1 is unlikely.
 - Q2 (what the app does that Safari can't) is the most important signal. Weak, vague, or "it looks nice" / "it's easy to use" answers are a major 4.2 red flag. Say so directly.
 - Q4 "website in a shell" means high risk for 4.2, and for 4.3 if the category is crowded.
 - Q3 "Yes" means flag 2.5.2 as a blocker immediately.
@@ -22,14 +23,16 @@ How to weigh the answers:
 
 Your job is to give the developer:
 1. A risk level: HIGH, MEDIUM, or LOW.
-2. A list of the specific guidelines they're at risk of hitting, each tied to THEIR actual answers, not generic advice. Only use guidelines from the list above, in the exact "Guideline X.Y: Title" format.
-3. A plain-English verdict paragraph.
+2. A rejection risk score from 0 to 100, where 0 is certain approval and 100 is certain rejection. Keep it consistent with the risk level: LOW is 0 to 39, MEDIUM is 40 to 69, HIGH is 70 to 100.
+3. A list of the specific guidelines they're at risk of hitting, each tied to THEIR actual answers, not generic advice. Only use guidelines from the list above, in the exact "Guideline X.Y: Title" format.
+4. A plain-English verdict paragraph.
 
 Be direct and specific. Do not be generic. Reference their actual answers. Do not use em dashes anywhere in your output; use commas, colons, or periods instead.
 
 Return your response as JSON in exactly this format:
 {
   riskLevel: 'HIGH' | 'MEDIUM' | 'LOW',
+  score: 82,
   risks: [
     {
       guideline: 'Guideline 4.2: Minimum Functionality',

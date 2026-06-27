@@ -11,7 +11,7 @@ import type { Answers, Diagnosis } from "@/lib/types";
 type Status = "idle" | "loading" | "report" | "error";
 
 const EMPTY_ANSWERS: Answers = {
-  buildTools: [],
+  dataPractices: [],
   safariDiff: "",
   downloadsCode: "",
   webViewShell: "",

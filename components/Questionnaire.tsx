@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BUILD_TOOLS,
+  DATA_PRACTICES,
   DOWNLOADS_CODE_OPTIONS,
   NATIVE_FEATURES,
   WEBVIEW_OPTIONS,
@@ -30,7 +30,7 @@ function OptionRow({
     <label
       className={`group flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 text-sm transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink ${
         checked
-          ? "border-line-strong bg-surface-2 text-ink"
+          ? "border-accent bg-accent/10 text-ink"
           : "border-line bg-transparent text-ink-muted hover:border-line-strong hover:text-ink"
       }`}
     >
@@ -45,7 +45,7 @@ function OptionRow({
         aria-hidden
         className={`flex h-4 w-4 shrink-0 items-center justify-center border ${
           type === "radio" ? "rounded-full" : "rounded-[5px]"
-        } ${checked ? "border-ink bg-ink" : "border-line-strong"}`}
+        } ${checked ? "border-accent bg-accent" : "border-line-strong"}`}
       >
         {checked &&
           (type === "radio" ? (
@@ -79,9 +79,9 @@ function QuestionCard({
   index: number;
   title: string;
   hint?: string;
-  /** One-line note pinned to the card's bottom edge — fills the frame and says
+  /** One-line note pinned to the card's bottom edge: fills the frame and says
    *  which guideline the question maps to. */
-  footer: string;
+  footer: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -111,7 +111,7 @@ export default function Questionnaire({
   onChange: (next: Answers) => void;
   onSubmit: () => void;
 }) {
-  const toggle = (key: "buildTools" | "nativeFeatures", option: string) => {
+  const toggle = (key: "dataPractices" | "nativeFeatures", option: string) => {
     const current = value[key];
     const next = current.includes(option)
       ? current.filter((o) => o !== option)
@@ -119,23 +119,52 @@ export default function Questionnaire({
     onChange({ ...value, [key]: next });
   };
 
-  const canSubmit = value.safariDiff.trim().length > 0;
+  const answeredFlags = [
+    value.dataPractices.length > 0,
+    value.safariDiff.trim().length > 0,
+    value.downloadsCode !== "",
+    value.webViewShell !== "",
+    value.nativeFeatures.length > 0,
+  ];
+  const answeredCount = answeredFlags.filter(Boolean).length;
+  const canSubmit = answeredFlags[1];
+
+  const q2Footer = canSubmit ? (
+    <span className="flex items-center gap-1.5 font-medium text-risk-low">
+      <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden>
+        <path
+          d="M3.5 8.5l3 3 6-7"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      Ready to run your check
+    </span>
+  ) : (
+    <span className="flex items-center gap-1.5 font-medium text-accent">
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
+      Answer this to run your check
+    </span>
+  );
 
   const cards = [
     <QuestionCard
       key="q1"
       index={1}
-      title="How did you build your app?"
-      footer="Context for your review. Not scored on its own."
+      title="Does your app collect personal data or have user accounts?"
+      footer="Probes Guideline 5.1.1, privacy and data."
     >
-      {BUILD_TOOLS.map((tool) => (
+      {DATA_PRACTICES.map((practice) => (
         <OptionRow
-          key={tool}
+          key={practice}
           type="checkbox"
-          name="buildTools"
-          label={tool}
-          checked={value.buildTools.includes(tool)}
-          onChange={() => toggle("buildTools", tool)}
+          name="dataPractices"
+          label={practice}
+          checked={value.dataPractices.includes(practice)}
+          onChange={() => toggle("dataPractices", practice)}
         />
       ))}
     </QuestionCard>,
@@ -145,7 +174,7 @@ export default function Questionnaire({
       index={2}
       title="What does your app do that someone couldn't just do in Safari?"
       hint="“It looks nice” or “it’s easy to use” aren’t valid answers. Apple wants to know why it has to be a native app and not just a website."
-      footer="The single biggest factor in your risk score."
+      footer={q2Footer}
     >
       <textarea
         value={value.safariDiff}
@@ -223,7 +252,29 @@ export default function Questionnaire({
         if (canSubmit) onSubmit();
       }}
     >
-      <Carousel items={cards} unitLabel="Question" ariaLabel="App questions" />
+      <div className="mb-4">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+            Progress
+          </span>
+          <span className="font-mono text-[11px] tabular-nums text-ink-muted">
+            {answeredCount} / 5 answered
+          </span>
+        </div>
+        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-2">
+          <div
+            className="h-full rounded-full bg-risk-low transition-all duration-300"
+            style={{ width: `${(answeredCount / 5) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      <Carousel
+        items={cards}
+        unitLabel="Question"
+        ariaLabel="App questions"
+        answered={answeredFlags}
+      />
 
       <div className="mx-auto mt-7 max-w-md">
         <button
@@ -233,12 +284,6 @@ export default function Questionnaire({
         >
           Check my app
         </button>
-        {!canSubmit && (
-          <p className="mt-2.5 text-center text-xs text-ink-faint">
-            Answer Question 2 to run the check. It’s the one Apple cares about
-            most.
-          </p>
-        )}
       </div>
     </form>
   );
