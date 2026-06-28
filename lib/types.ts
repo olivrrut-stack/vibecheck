@@ -67,6 +67,23 @@ export interface FixReport {
   fixes: DeepFix[];
 }
 
+/**
+ * A purchased report as stored in Supabase (see supabase/migrations). One row
+ * per app a user checks and unlocks; `fixes` is null until paid. Mirrors the
+ * `reports` table columns.
+ */
+export interface StoredReport {
+  id: string;
+  user_id: string;
+  answers: Answers;
+  diagnosis: Diagnosis;
+  fixes: FixReport | null;
+  paid: boolean;
+  stripe_session_id: string | null;
+  created_at: string;
+  paid_at: string | null;
+}
+
 // ---- Questionnaire option lists (single source of truth for the UI) ----
 
 export const DATA_PRACTICES = [
