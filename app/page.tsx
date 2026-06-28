@@ -5,6 +5,7 @@ import AccountMenu from "@/components/AccountMenu";
 import AppIcon, { VIBE_GRADIENT } from "@/components/AppIcon";
 import Questionnaire from "@/components/Questionnaire";
 import RiskReport from "@/components/RiskReport";
+import SiteFooter from "@/components/SiteFooter";
 import Spinner from "@/components/Spinner";
 import StoreHeader from "@/components/StoreHeader";
 import type { Answers, Diagnosis } from "@/lib/types";
@@ -159,22 +160,7 @@ export default function Home() {
         </div>
       )}
 
-      <footer className="mt-16 border-t border-line pt-6">
-        <p className="max-w-2xl text-xs leading-relaxed text-ink-faint">
-          VibeCheck gives an informed risk estimate based on your answers. It
-          isn&rsquo;t affiliated with Apple and doesn&rsquo;t guarantee approval
-          or rejection. Always read the{" "}
-          <a
-            href="https://developer.apple.com/app-store/review/guidelines/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-ink-muted underline underline-offset-2 hover:text-ink"
-          >
-            App Store Review Guidelines
-          </a>
-          .
-        </p>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
