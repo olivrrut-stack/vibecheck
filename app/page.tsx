@@ -61,7 +61,7 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-14">
+    <main className="mx-auto w-full max-w-5xl px-5 py-6 sm:px-8 sm:py-14">
       {/* Slim brand bar — keeps the user oriented once the main panel stops
           being VibeCheck's own listing. On idle, the full StoreHeader carries
           the branding, so the bar would just double it. */}
@@ -91,9 +91,9 @@ export default function Home() {
       )}
 
       {status === "idle" && (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           <StoreHeader />
-          <section className="space-y-5">
+          <section className="space-y-4 sm:space-y-5">
             <div>
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
                 Pre-submission review

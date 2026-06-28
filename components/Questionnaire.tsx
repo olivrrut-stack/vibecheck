@@ -252,7 +252,7 @@ export default function Questionnaire({
         if (canSubmit) onSubmit();
       }}
     >
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex items-center justify-between">
           <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
             Progress
