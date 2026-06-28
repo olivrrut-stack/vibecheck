@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AppIcon, { VIBE_GRADIENT } from "@/components/AppIcon";
 import RiskMeter from "@/components/RiskMeter";
-import { VERDICT, isRiskLevel } from "@/lib/verdict";
+import { VERDICT, clampScoreToLevel, isRiskLevel } from "@/lib/verdict";
 
 // Stateless shareable result: the score and level ride in the path, so this
 // page renders from the URL alone — no account, no stored data, no API call.
@@ -14,7 +14,7 @@ function parse(levelRaw: string, scoreRaw: string) {
   const level = decodeURIComponent(levelRaw).toUpperCase();
   const score = parseInt(scoreRaw, 10);
   if (!isRiskLevel(level) || Number.isNaN(score)) return null;
-  return { level, score: Math.max(0, Math.min(100, score)) };
+  return { level, score: clampScoreToLevel(level, score) };
 }
 
 export async function generateMetadata({

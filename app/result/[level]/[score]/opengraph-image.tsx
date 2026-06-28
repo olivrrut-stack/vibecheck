@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { VERDICT, isRiskLevel } from "@/lib/verdict";
+import { VERDICT, clampScoreToLevel, isRiskLevel } from "@/lib/verdict";
 
 // Dynamic share card: when a /result/<level>/<score> link is posted, the preview
 // shows the app's score. This is the part that makes people click.
@@ -13,9 +13,10 @@ export default async function Image({
   params: Promise<{ level: string; score: string }>;
 }) {
   const { level: levelRaw, score: scoreRaw } = await params;
-  const level = decodeURIComponent(levelRaw).toUpperCase();
-  const score = Math.max(0, Math.min(100, parseInt(scoreRaw, 10) || 0));
-  const v = isRiskLevel(level) ? VERDICT[level] : VERDICT.MEDIUM;
+  const raw = decodeURIComponent(levelRaw).toUpperCase();
+  const level = isRiskLevel(raw) ? raw : "MEDIUM";
+  const score = clampScoreToLevel(level, parseInt(scoreRaw, 10) || 0);
+  const v = VERDICT[level];
 
   return new ImageResponse(
     (

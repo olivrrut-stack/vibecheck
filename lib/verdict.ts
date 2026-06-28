@@ -34,3 +34,13 @@ export const VERDICT: Record<RiskLevel, VerdictInfo> = {
 export function isRiskLevel(value: string): value is RiskLevel {
   return value === "HIGH" || value === "MEDIUM" || value === "LOW";
 }
+
+// Force the numeric score into the band its level implies, so a model slip (or a
+// hand-edited share link) can never show e.g. a green "Looks Clear" pill over an
+// 85/100 meter. Also rounds to an integer.
+export function clampScoreToLevel(level: RiskLevel, score: number): number {
+  const s = Math.round(Math.max(0, Math.min(100, score)));
+  if (level === "HIGH") return Math.max(70, s);
+  if (level === "MEDIUM") return Math.min(69, Math.max(40, s));
+  return Math.min(39, s);
+}

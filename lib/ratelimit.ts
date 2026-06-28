@@ -82,37 +82,57 @@ export async function checkRateLimit(ip: string): Promise<RateResult> {
 // Redis. Keyed by YYYY-MM-DD.
 const memoryDaily = new Map<string, number>();
 
-// Is the global daily cap still open? Reads the durable counter when Redis is
-// present, else the per-instance total. Fails open on a Redis error.
-export async function checkDailyCap(
-  day: string
-): Promise<{ ok: boolean; used: number; cap: number }> {
-  if (redis) {
-    try {
-      const used = Number(await redis.get(`vibecheck:checks:${day}`)) || 0;
-      return { ok: used < DAILY_CAP, used, cap: DAILY_CAP };
-    } catch {
-      return { ok: true, used: 0, cap: DAILY_CAP };
-    }
-  }
-  return { ok: (memoryDaily.get(day) ?? 0) < DAILY_CAP, used: memoryDaily.get(day) ?? 0, cap: DAILY_CAP };
-}
-
-// Count one paid check. Increments the in-memory total always (for the cap and
-// local visibility) and the durable Redis counter when present.
-export async function recordUsage(day: string): Promise<void> {
-  memoryDaily.set(day, (memoryDaily.get(day) ?? 0) + 1);
+function pruneDaily() {
   if (memoryDaily.size > 14) {
     const keep = [...memoryDaily.keys()].sort().slice(-2);
     for (const k of [...memoryDaily.keys()]) {
       if (!keep.includes(k)) memoryDaily.delete(k);
     }
   }
+}
+
+// Atomically count one check against the global daily cap and report whether it
+// is still under the limit. Incrementing first, then comparing the returned
+// total, closes the read-then-write race that could let concurrent requests
+// overshoot the cap. Sets a 48h TTL on first write so day keys don't pile up.
+// Fails open on a Redis error.
+export async function consumeDailyCap(
+  day: string
+): Promise<{ ok: boolean; used: number }> {
+  const key = `vibecheck:checks:${day}`;
   if (redis) {
     try {
-      await redis.incr(`vibecheck:checks:${day}`);
+      const used = await redis.incr(key);
+      if (used === 1) {
+        try {
+          await redis.expire(key, 60 * 60 * 48);
+        } catch {
+          // TTL is best-effort.
+        }
+      }
+      return { ok: used <= DAILY_CAP, used };
     } catch {
-      // Usage counting must never break a check.
+      return { ok: true, used: 0 };
     }
   }
+  const used = (memoryDaily.get(day) ?? 0) + 1;
+  memoryDaily.set(day, used);
+  pruneDaily();
+  return { ok: used <= DAILY_CAP, used };
+}
+
+// Give a counted slot back — used when a counted request was rejected by the cap
+// or the Anthropic call failed before it billed anything.
+export async function refundDaily(day: string): Promise<void> {
+  const key = `vibecheck:checks:${day}`;
+  if (redis) {
+    try {
+      await redis.decr(key);
+    } catch {
+      // Refund is best-effort; never break a request over it.
+    }
+    return;
+  }
+  const used = memoryDaily.get(day);
+  if (used) memoryDaily.set(day, Math.max(0, used - 1));
 }

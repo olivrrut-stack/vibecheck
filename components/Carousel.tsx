@@ -98,13 +98,12 @@ export default function Carousel({
 
       {/* Gallery controls: dots + position + prev/next, App Store style. */}
       <div className="mt-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-1.5" role="tablist" aria-label={`${ariaLabel} pages`}>
+        <div className="flex items-center gap-1.5" aria-label={`${ariaLabel} position`}>
           {items.map((_, i) => (
             <button
               key={i}
               type="button"
-              role="tab"
-              aria-selected={i === active}
+              aria-current={i === active ? "true" : undefined}
               aria-label={`Go to ${unitLabel.toLowerCase()} ${i + 1}`}
               onClick={() => scrollToIndex(i)}
               className={`h-2 rounded-full transition-all ${

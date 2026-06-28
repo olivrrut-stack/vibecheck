@@ -3,11 +3,12 @@ import { NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/prompt";
 import {
   RATE_LIMIT,
-  checkDailyCap,
   checkRateLimit,
-  recordUsage,
+  consumeDailyCap,
+  refundDaily,
 } from "@/lib/ratelimit";
 import type { Answers, Diagnosis, RiskLevel } from "@/lib/types";
+import { clampScoreToLevel } from "@/lib/verdict";
 
 // The diagnosis is written by Claude on every request, server-side only.
 // The API key never reaches the browser.
@@ -75,10 +76,18 @@ function buildUserMessage(a: Answers): string {
   ].join("\n");
 }
 
-// Pull the first JSON object out of a text blob, tolerating code fences.
+// Pull the JSON object out of the response. The json_schema output format means
+// it's almost always clean JSON, so try that first; only fall back to fence /
+// brace extraction if the model wrapped it in prose.
 function extractJson(text: string): unknown {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const candidate = fenced ? fenced[1] : text;
+  const trimmed = text.trim();
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // not bare JSON — fall through
+  }
+  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1] : trimmed;
   const start = candidate.indexOf("{");
   const end = candidate.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("No JSON object in response");
@@ -152,18 +161,17 @@ export async function POST(req: Request) {
     );
   }
 
-  // Global daily circuit breaker on top of the per-IP limit.
+  // Global daily circuit breaker on top of the per-IP limit. Atomically counts
+  // this attempt; if it pushed us over the cap, refund it and bail.
   const day = new Date().toISOString().slice(0, 10);
-  const daily = await checkDailyCap(day);
+  const daily = await consumeDailyCap(day);
   if (!daily.ok) {
+    await refundDaily(day);
     return NextResponse.json(
       { error: "VibeCheck has hit today's capacity. Please check back tomorrow." },
       { status: 503 }
     );
   }
-  // Count this paid check before the call so it stays accurate even if the
-  // model request later errors (it still cost a request).
-  await recordUsage(day);
 
   try {
     const client = new Anthropic({ apiKey });
@@ -214,21 +222,30 @@ export async function POST(req: Request) {
       throw new Error("Model returned an unexpected shape");
     }
 
+    // Keep the score and the verdict band in lockstep so the UI can never show
+    // a green pill over a high meter (or vice versa).
+    const result: Diagnosis = {
+      ...parsed,
+      score: clampScoreToLevel(parsed.riskLevel, parsed.score),
+    };
+
     // Usage visibility: a log line per check (Vercel function logs) plus a
     // durable daily counter when Redis is configured.
     console.log("[VibeCheck] check", {
       backend: rate.backend,
       remaining: rate.remaining,
-      usedToday: daily.used + 1,
-      riskLevel: parsed.riskLevel,
-      score: parsed.score,
+      usedToday: daily.used,
+      riskLevel: result.riskLevel,
+      score: result.score,
     });
 
-    return NextResponse.json(parsed satisfies Diagnosis);
+    return NextResponse.json(result);
   } catch (err) {
     // Preserve the upstream status so the client can react (e.g. back off on a
-    // 429 instead of hammering Retry).
+    // 429 instead of hammering Retry). An Anthropic API/connection error means
+    // nothing billed, so refund the daily slot we counted up front.
     if (err instanceof Anthropic.APIError) {
+      await refundDaily(day);
       const status = err.status ?? 502;
       console.error("[VibeCheck] Anthropic API error:", status, err.message);
       const message =
