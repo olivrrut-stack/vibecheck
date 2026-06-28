@@ -1,37 +1,15 @@
-import type { Diagnosis, RiskLevel } from "@/lib/types";
+import type { Diagnosis } from "@/lib/types";
+import { VERDICT } from "@/lib/verdict";
 import AppIcon, { NEUTRAL_GRADIENT } from "./AppIcon";
 import MetaStrip from "./MetaStrip";
 import RiskMeter from "./RiskMeter";
+import ShareButton from "./ShareButton";
 
 // The result renders as a mock App Store listing for the developer's own app:
 // their "product header" with the verdict where the Get button lives, a
 // rejection-risk gauge, the rating strip, then one full-width "App Review Notes"
 // panel where each flagged guideline is a row with a stat badge, why it fails,
 // a quick fix, and a link to the real Apple clause.
-
-const VERDICT: Record<
-  RiskLevel,
-  { pill: string; short: string; color: string; onColor: string }
-> = {
-  HIGH: {
-    pill: "Likely Rejected",
-    short: "HIGH",
-    color: "var(--color-risk-high)",
-    onColor: "#ffffff",
-  },
-  MEDIUM: {
-    pill: "Needs Work",
-    short: "MEDIUM",
-    color: "var(--color-risk-medium)",
-    onColor: "#ffffff",
-  },
-  LOW: {
-    pill: "Looks Clear",
-    short: "LOW",
-    color: "var(--color-risk-low)",
-    onColor: "#ffffff",
-  },
-};
 
 // Anchors on Apple's live guidelines page so each note links to its real clause.
 const GUIDELINE_ANCHOR: Record<string, string> = {
@@ -92,7 +70,7 @@ export default function RiskReport({
             <div className="mt-3">
               <span
                 className="inline-flex rounded-full px-5 py-1.5 text-sm font-semibold"
-                style={{ backgroundColor: v.color, color: v.onColor }}
+                style={{ backgroundColor: v.colorVar, color: "#ffffff" }}
               >
                 {v.pill}
               </span>
@@ -102,13 +80,13 @@ export default function RiskReport({
 
         {/* Hero graph: the rejection-risk gauge. */}
         <div className="mt-6">
-          <RiskMeter score={diagnosis.score} color={v.color} />
+          <RiskMeter score={diagnosis.score} color={v.colorVar} />
         </div>
 
         <div className="mt-5 border-y border-line py-4">
           <MetaStrip
             cells={[
-              { value: <span style={{ color: v.color }}>{v.short}</span>, label: "Risk Level" },
+              { value: <span style={{ color: v.colorVar }}>{v.short}</span>, label: "Risk Level" },
               { value: String(count), label: count === 1 ? "Flag" : "Flags" },
               { value: topIssue, label: "Top Issue" },
             ]}
@@ -136,8 +114,8 @@ export default function RiskReport({
                   <div
                     className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-sm font-bold"
                     style={{
-                      backgroundColor: `color-mix(in srgb, ${v.color} 14%, transparent)`,
-                      color: v.color,
+                      backgroundColor: `color-mix(in srgb, ${v.colorVar} 14%, transparent)`,
+                      color: v.colorVar,
                     }}
                   >
                     {num}
@@ -192,8 +170,8 @@ export default function RiskReport({
             <div
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
               style={{
-                backgroundColor: `color-mix(in srgb, ${v.color} 14%, transparent)`,
-                color: v.color,
+                backgroundColor: `color-mix(in srgb, ${v.colorVar} 14%, transparent)`,
+                color: v.colorVar,
               }}
             >
               <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
@@ -224,7 +202,8 @@ export default function RiskReport({
         </p>
       </section>
 
-      <div className="pt-2">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+        <ShareButton score={diagnosis.score} level={diagnosis.riskLevel} />
         <button
           type="button"
           onClick={onReset}

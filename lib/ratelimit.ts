@@ -14,7 +14,13 @@ const LIMIT = 5; // checks allowed per IP per window
 const WINDOW = "1 h"; // human window for Upstash
 const WINDOW_MS = 60 * 60 * 1000; // same window for the in-memory fallback
 
+// Global circuit breaker: total checks allowed across all IPs per day. Bounds
+// worst-case spend (~$0.02/check, so 250/day caps it near $5). Override with
+// DAILY_CHECK_CAP. Truly global only with Redis; per-instance otherwise.
+const DAILY_CAP = Number(process.env.DAILY_CHECK_CAP) || 250;
+
 export const RATE_LIMIT = LIMIT;
+export const DAILY_CHECK_CAP = DAILY_CAP;
 
 function getRedis(): Redis | null {
   const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
@@ -72,13 +78,41 @@ export async function checkRateLimit(ip: string): Promise<RateResult> {
   return { ...memoryLimit(ip), backend: "memory" };
 }
 
-// Durable daily usage counter, viewable in the Upstash data browser. No-op
-// without Redis (local logs are the fallback for usage visibility).
+// In-memory daily totals so the global cap still works (per instance) without
+// Redis. Keyed by YYYY-MM-DD.
+const memoryDaily = new Map<string, number>();
+
+// Is the global daily cap still open? Reads the durable counter when Redis is
+// present, else the per-instance total. Fails open on a Redis error.
+export async function checkDailyCap(
+  day: string
+): Promise<{ ok: boolean; used: number; cap: number }> {
+  if (redis) {
+    try {
+      const used = Number(await redis.get(`vibecheck:checks:${day}`)) || 0;
+      return { ok: used < DAILY_CAP, used, cap: DAILY_CAP };
+    } catch {
+      return { ok: true, used: 0, cap: DAILY_CAP };
+    }
+  }
+  return { ok: (memoryDaily.get(day) ?? 0) < DAILY_CAP, used: memoryDaily.get(day) ?? 0, cap: DAILY_CAP };
+}
+
+// Count one paid check. Increments the in-memory total always (for the cap and
+// local visibility) and the durable Redis counter when present.
 export async function recordUsage(day: string): Promise<void> {
-  if (!redis) return;
-  try {
-    await redis.incr(`vibecheck:checks:${day}`);
-  } catch {
-    // Usage counting must never break a check.
+  memoryDaily.set(day, (memoryDaily.get(day) ?? 0) + 1);
+  if (memoryDaily.size > 14) {
+    const keep = [...memoryDaily.keys()].sort().slice(-2);
+    for (const k of [...memoryDaily.keys()]) {
+      if (!keep.includes(k)) memoryDaily.delete(k);
+    }
+  }
+  if (redis) {
+    try {
+      await redis.incr(`vibecheck:checks:${day}`);
+    } catch {
+      // Usage counting must never break a check.
+    }
   }
 }

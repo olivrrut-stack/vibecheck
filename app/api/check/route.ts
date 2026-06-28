@@ -1,7 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/prompt";
-import { RATE_LIMIT, checkRateLimit, recordUsage } from "@/lib/ratelimit";
+import {
+  RATE_LIMIT,
+  checkDailyCap,
+  checkRateLimit,
+  recordUsage,
+} from "@/lib/ratelimit";
 import type { Answers, Diagnosis, RiskLevel } from "@/lib/types";
 
 // The diagnosis is written by Claude on every request, server-side only.
@@ -147,6 +152,19 @@ export async function POST(req: Request) {
     );
   }
 
+  // Global daily circuit breaker on top of the per-IP limit.
+  const day = new Date().toISOString().slice(0, 10);
+  const daily = await checkDailyCap(day);
+  if (!daily.ok) {
+    return NextResponse.json(
+      { error: "VibeCheck has hit today's capacity. Please check back tomorrow." },
+      { status: 503 }
+    );
+  }
+  // Count this paid check before the call so it stays accurate even if the
+  // model request later errors (it still cost a request).
+  await recordUsage(day);
+
   try {
     const client = new Anthropic({ apiKey });
 
@@ -201,10 +219,10 @@ export async function POST(req: Request) {
     console.log("[VibeCheck] check", {
       backend: rate.backend,
       remaining: rate.remaining,
+      usedToday: daily.used + 1,
       riskLevel: parsed.riskLevel,
       score: parsed.score,
     });
-    await recordUsage(new Date().toISOString().slice(0, 10));
 
     return NextResponse.json(parsed satisfies Diagnosis);
   } catch (err) {
