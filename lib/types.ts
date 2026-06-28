@@ -11,15 +11,17 @@ export type WebViewShell =
   | "I'm not sure";
 
 export interface Answers {
-  /** Q1 — data collection / accounts (multi-select). Drives Guideline 5.1.1. */
+  /** Q1 — which AI tool built the app. Context/personalization, not a guideline. */
+  buildTool: string;
+  /** Q2 — data collection / accounts (multi-select). Drives Guideline 5.1.1. */
   dataPractices: string[];
-  /** Q2 — what the app does that Safari can't. The most important signal. */
+  /** Q3 — what the app does that Safari can't. The most important signal. */
   safariDiff: string;
-  /** Q3 — downloads/executes code at runtime. */
+  /** Q4 — downloads/executes code at runtime. */
   downloadsCode: DownloadsCode | "";
-  /** Q4 — main screen is a WebView/website-in-a-shell. */
+  /** Q5 — main screen is a WebView/website-in-a-shell. */
   webViewShell: WebViewShell | "";
-  /** Q5 — native capabilities actually used (multi-select). */
+  /** Q6 — native capabilities actually used (multi-select). */
   nativeFeatures: string[];
 }
 
@@ -85,6 +87,17 @@ export interface StoredReport {
 }
 
 // ---- Questionnaire option lists (single source of truth for the UI) ----
+
+export const BUILD_TOOLS = [
+  "Cursor",
+  "Lovable",
+  "Bolt",
+  "Claude Code",
+  "Replit",
+  "v0",
+  "Something else",
+  "I coded it by hand",
+] as const;
 
 export const DATA_PRACTICES = [
   "Collects personal data (email, location…)",

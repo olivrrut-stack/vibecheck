@@ -7,6 +7,7 @@ export function isAnswers(value: unknown): value is Answers {
   if (!value || typeof value !== "object") return false;
   const a = value as Record<string, unknown>;
   return (
+    (a.buildTool === undefined || typeof a.buildTool === "string") &&
     Array.isArray(a.dataPractices) &&
     typeof a.safariDiff === "string" &&
     typeof a.downloadsCode === "string" &&

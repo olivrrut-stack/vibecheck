@@ -105,9 +105,8 @@ export default function TermsPage() {
 
       <h2>Governing law</h2>
       <p>
-        These terms are governed by the laws of the place where the operator of
-        VibeCheck resides, without regard to conflict-of-laws rules. (Operator:
-        set your country/state before launch.)
+        These terms are governed by the laws of the State of California, USA,
+        without regard to conflict-of-laws rules.
       </p>
 
       <h2>Changes and contact</h2>

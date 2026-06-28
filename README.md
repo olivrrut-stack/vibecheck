@@ -2,12 +2,13 @@
 
 **Find out if your AI-built app will get rejected before Apple does.**
 
-A free, no-account web app that estimates your App Store rejection risk. Answer 5 questions
-about your app and Claude returns a risk score, the specific Apple guidelines you're likely to
-hit, and the exact fixes — in plain English. Built for developers shipping apps from Cursor,
-Lovable, Bolt, Claude Code, and Replit.
+A web app that estimates your App Store rejection risk. The check is free and needs no
+account: answer 6 questions about your app and Claude returns a risk score, the specific Apple
+guidelines you're likely to hit, and the exact fixes — in plain English. An optional $5 deep
+fix report (which does require an account) goes further. Built for developers shipping apps
+from Cursor, Lovable, Bolt, Claude Code, and Replit.
 
-It focuses on the judgment calls that actually sink AI-built apps — **Guideline 4.3**
+It focuses on the judgment calls that actually sink AI-built apps — **Guideline 4.2**
 (minimum functionality / "does this deserve to be a native app?") and **Guideline 2.5.2**
 (running code Apple didn't review) — not just code-level checks.
 
@@ -16,7 +17,9 @@ It focuses on the judgment calls that actually sink AI-built apps — **Guidelin
 - Next.js 16 (App Router) + TypeScript
 - Tailwind CSS v4
 - Anthropic API via `@anthropic-ai/sdk` (model: `claude-sonnet-4-6`), called server-side only
-- No database — stateless, no accounts
+- The free check is stateless (no database, no account)
+- Paid $5 fix report: Supabase (auth + report storage), Stripe (checkout), Upstash Redis
+  (rate limiting)
 
 ## Local setup
 
@@ -29,6 +32,10 @@ It focuses on the judgment calls that actually sink AI-built apps — **Guidelin
    ```
    ANTHROPIC_API_KEY=sk-ant-...
    ```
+   That's all the free check needs. The optional paid fix report additionally requires
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
+   and `STRIPE_SECRET_KEY`. In production also set `NEXT_PUBLIC_SITE_URL=https://vibecheckhq.app`
+   so share/OG previews resolve to the live domain.
 3. Run the dev server:
    ```bash
    npm run dev
@@ -58,8 +65,11 @@ npm run lint
 
 1. Push this repo to GitHub and import it at https://vercel.com/new (or run `vercel`).
 2. In the Vercel project's **Settings → Environment Variables**, add `ANTHROPIC_API_KEY` with
-   your key (Production + Preview).
-3. Deploy. No other configuration needed — there's no database or backend to provision.
+   your key (Production + Preview). For the paid flow also add the Supabase + Stripe vars
+   listed under Local setup, and `NEXT_PUBLIC_SITE_URL`. For durable rate limiting across
+   serverless instances, add the Upstash Redis vars too.
+3. Provision the Supabase database by running the migration in `supabase/migrations/`.
+4. Deploy.
 
 ## License
 

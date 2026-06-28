@@ -77,7 +77,7 @@ export default function OpengraphImage() {
               Looks Clear
             </div>
             <div style={{ fontSize: "26px", color: "#8a8a93" }}>
-              Free check · 5 questions · Fixes for $5
+              Free check · 6 questions · Fixes for $5
             </div>
           </div>
         </div>

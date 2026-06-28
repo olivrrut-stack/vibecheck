@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BUILD_TOOLS,
   DATA_PRACTICES,
   DOWNLOADS_CODE_OPTIONS,
   NATIVE_FEATURES,
@@ -85,7 +86,7 @@ function QuestionCard({
   children: React.ReactNode;
 }) {
   return (
-    <ScreenshotCard eyebrow={`Question ${index} of 5${index === 2 ? " · Key" : ""}`}>
+    <ScreenshotCard eyebrow={`Question ${index} of 6${index === 3 ? " · Key" : ""}`}>
       <fieldset className="flex flex-1 flex-col">
         <legend className="text-[17px] font-semibold leading-snug text-ink">
           {title}
@@ -120,6 +121,7 @@ export default function Questionnaire({
   };
 
   const answeredFlags = [
+    value.buildTool !== "",
     value.dataPractices.length > 0,
     value.safariDiff.trim().length > 0,
     value.downloadsCode !== "",
@@ -127,7 +129,8 @@ export default function Questionnaire({
     value.nativeFeatures.length > 0,
   ];
   const answeredCount = answeredFlags.filter(Boolean).length;
-  const canSubmit = answeredFlags[1];
+  // Only the "what can your app do that a website can't" answer gates submission.
+  const canSubmit = answeredFlags[2];
 
   const q2Footer = canSubmit ? (
     <span className="flex items-center gap-1.5 font-medium text-risk-low">
@@ -152,8 +155,26 @@ export default function Questionnaire({
 
   const cards = [
     <QuestionCard
-      key="q1"
+      key="buildTool"
       index={1}
+      title="How did you build your app?"
+      footer="Sets the context. VibeCheck is tuned for AI-built apps."
+    >
+      {BUILD_TOOLS.map((tool) => (
+        <OptionRow
+          key={tool}
+          type="radio"
+          name="buildTool"
+          label={tool}
+          checked={value.buildTool === tool}
+          onChange={() => onChange({ ...value, buildTool: tool })}
+        />
+      ))}
+    </QuestionCard>,
+
+    <QuestionCard
+      key="q1"
+      index={2}
       title="Does your app collect data or have accounts?"
       footer="Probes Guideline 5.1.1, privacy and data."
     >
@@ -171,7 +192,7 @@ export default function Questionnaire({
 
     <QuestionCard
       key="q2"
-      index={2}
+      index={3}
       title="What can your app do that a website can't?"
       hint="“Looks nice” or “easy to use” don’t count. Apple wants a real reason it must be native."
       footer={q2Footer}
@@ -188,7 +209,7 @@ export default function Questionnaire({
 
     <QuestionCard
       key="q3"
-      index={3}
+      index={4}
       title="Does your app download or run code from the internet?"
       footer="Probes Guideline 2.5.2, code execution. “Yes” is a blocker."
     >
@@ -208,7 +229,7 @@ export default function Questionnaire({
 
     <QuestionCard
       key="q4"
-      index={4}
+      index={5}
       title="Is your main screen a website inside the app?"
       footer="Probes Guideline 4.2, the web-wrapper test."
     >
@@ -228,7 +249,7 @@ export default function Questionnaire({
 
     <QuestionCard
       key="q5"
-      index={5}
+      index={6}
       title="Which of these does your app use?"
       footer="Real native features count in your favor against 4.2."
     >
@@ -258,13 +279,13 @@ export default function Questionnaire({
             Progress
           </span>
           <span className="font-mono text-[11px] tabular-nums text-ink-muted">
-            {answeredCount} / 5 answered
+            {answeredCount} / 6 answered
           </span>
         </div>
         <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-2">
           <div
             className="h-full rounded-full bg-risk-low transition-all duration-300"
-            style={{ width: `${(answeredCount / 5) * 100}%` }}
+            style={{ width: `${(answeredCount / 6) * 100}%` }}
           />
         </div>
       </div>

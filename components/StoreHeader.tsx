@@ -48,7 +48,7 @@ export default function StoreHeader() {
         <MetaStrip
           cells={[
             { value: "Free", label: "Check" },
-            { value: "5", label: "Questions" },
+            { value: "6", label: "Questions" },
             { value: "~10s", label: "Result" },
             { value: "$5", label: "Fixes" },
             {

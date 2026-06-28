@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       <h2>What we collect</h2>
       <ul>
         <li>
-          <strong>Your answers.</strong> The five questionnaire answers you
+          <strong>Your answers.</strong> The six questionnaire answers you
           submit, including the free-text description of what your app does. This
           is the input we analyze.
         </li>

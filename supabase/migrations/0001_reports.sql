@@ -10,7 +10,7 @@ create table if not exists public.reports (
   id                uuid primary key default gen_random_uuid(),
   -- The buyer. Set when the report is persisted at purchase.
   user_id           uuid not null references auth.users (id) on delete cascade,
-  -- The 5 questionnaire answers (+ any optional extra context).
+  -- The 6 questionnaire answers (+ any optional extra context).
   answers           jsonb not null,
   -- score, level, flagged guidelines + reasons.
   diagnosis         jsonb not null,

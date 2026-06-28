@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Resolves relative OG/icon URLs. Override with NEXT_PUBLIC_SITE_URL in prod.
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+// Resolves relative OG/icon URLs. Override with NEXT_PUBLIC_SITE_URL (e.g. preview deploys).
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vibecheckhq.app";
 
 const title = "VibeCheck: App rejection risk checker";
 const description =
