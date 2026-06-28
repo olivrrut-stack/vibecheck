@@ -18,7 +18,7 @@ export default function Carousel({
   items,
   unitLabel,
   ariaLabel,
-  itemClassName = "w-[80vw] max-w-[300px] sm:w-[300px]",
+  itemClassName = "w-[90vw] max-w-[440px] sm:w-[330px]",
   answered,
 }: {
   items: ReactNode[];
