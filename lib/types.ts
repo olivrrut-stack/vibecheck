@@ -93,12 +93,14 @@ export interface StoredReport {
 export const BUILD_TOOLS = [
   "Cursor",
   "Claude Code",
+  "Codex",
   "GitHub Copilot",
   "Windsurf",
   "Lovable",
   "Bolt",
   "v0",
   "Replit",
+  "Xcode",
   "I coded it by hand",
 ] as const;
 
