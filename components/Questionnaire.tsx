@@ -28,7 +28,7 @@ function OptionRow({
 }) {
   return (
     <label
-      className={`group flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 text-sm transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink ${
+      className={`group flex min-h-[44px] cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 text-sm transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink ${
         checked
           ? "border-accent bg-accent/10 text-ink"
           : "border-line bg-transparent text-ink-muted hover:border-line-strong hover:text-ink"
