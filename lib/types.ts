@@ -88,14 +88,17 @@ export interface StoredReport {
 
 // ---- Questionnaire option lists (single source of truth for the UI) ----
 
+// Major AI code/app builders. "Other" (free-text) and the empty default are
+// handled in the Questionnaire, so they're intentionally not in this list.
 export const BUILD_TOOLS = [
   "Cursor",
+  "Claude Code",
+  "GitHub Copilot",
+  "Windsurf",
   "Lovable",
   "Bolt",
-  "Claude Code",
-  "Replit",
   "v0",
-  "Something else",
+  "Replit",
   "I coded it by hand",
 ] as const;
 

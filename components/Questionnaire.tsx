@@ -10,6 +10,7 @@ import {
   type DownloadsCode,
   type WebViewShell,
 } from "@/lib/types";
+import { useState } from "react";
 import Carousel from "./Carousel";
 import ScreenshotCard from "./ScreenshotCard";
 
@@ -112,6 +113,15 @@ export default function Questionnaire({
   onChange: (next: Answers) => void;
   onSubmit: () => void;
 }) {
+  // "Other" is its own radio backed by a free-text input. We can't derive its
+  // selected state purely from value.buildTool (a half-typed custom value would
+  // flicker the radio off), so track it locally. Initialize on for a restored
+  // custom value that isn't one of the listed tools.
+  const [otherMode, setOtherMode] = useState(
+    value.buildTool !== "" &&
+      !(BUILD_TOOLS as readonly string[]).includes(value.buildTool)
+  );
+
   const toggle = (key: "dataPractices" | "nativeFeatures", option: string) => {
     const current = value[key];
     const next = current.includes(option)
@@ -166,10 +176,34 @@ export default function Questionnaire({
           type="radio"
           name="buildTool"
           label={tool}
-          checked={value.buildTool === tool}
-          onChange={() => onChange({ ...value, buildTool: tool })}
+          checked={!otherMode && value.buildTool === tool}
+          onChange={() => {
+            setOtherMode(false);
+            onChange({ ...value, buildTool: tool });
+          }}
         />
       ))}
+      <OptionRow
+        type="radio"
+        name="buildTool"
+        label="Other"
+        checked={otherMode}
+        onChange={() => {
+          setOtherMode(true);
+          onChange({ ...value, buildTool: "" });
+        }}
+      />
+      {otherMode && (
+        <input
+          type="text"
+          value={value.buildTool}
+          onChange={(e) => onChange({ ...value, buildTool: e.target.value })}
+          maxLength={60}
+          placeholder="Which tool did you use?"
+          aria-label="The tool you used to build your app"
+          className="mt-1 w-full rounded-lg border border-line-strong bg-surface-2 px-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent"
+        />
+      )}
     </QuestionCard>,
 
     <QuestionCard
