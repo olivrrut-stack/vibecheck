@@ -1,51 +1,30 @@
-import type { Diagnosis } from "@/lib/types";
+import {
+  guidelineHref,
+  guidelineNumber,
+  splitGuideline,
+} from "@/lib/guidelines";
+import type { Answers, Diagnosis } from "@/lib/types";
 import { VERDICT } from "@/lib/verdict";
 import AppIcon, { NEUTRAL_GRADIENT } from "./AppIcon";
 import MetaStrip from "./MetaStrip";
 import RiskMeter from "./RiskMeter";
 import ShareButton from "./ShareButton";
+import UnlockPanel from "./UnlockPanel";
 
 // The result renders as a mock App Store listing for the developer's own app:
 // their "product header" with the verdict where the Get button lives, a
 // rejection-risk gauge, the rating strip, then one full-width "App Review Notes"
 // panel where each flagged guideline is a row with a stat badge, why it fails,
-// a quick fix, and a link to the real Apple clause.
-
-// Anchors on Apple's live guidelines page so each note links to its real clause.
-const GUIDELINE_ANCHOR: Record<string, string> = {
-  "4.2": "minimum-functionality",
-  "4.3": "spam",
-  "2.5.2": "software-requirements",
-  "5.1.1": "data-collection-and-storage",
-  "4.1": "copycats",
-  "2.3.1": "accurate-metadata",
-  "3.1.1": "in-app-purchase",
-};
-
-function guidelineHref(num: string): string {
-  const base = "https://developer.apple.com/app-store/review/guidelines/";
-  const anchor = GUIDELINE_ANCHOR[num];
-  return anchor ? `${base}#${anchor}` : base;
-}
-
-// Pull a leading "Guideline X.Y" token out so we can set it in mono — the
-// guideline number is a real clause reference, so it earns the structural face.
-function splitGuideline(guideline: string): { tag: string; rest: string } {
-  const match = guideline.match(/^(Guideline\s+[\d.]+)\s*[:—-]?\s*(.*)$/i);
-  if (match) return { tag: match[1], rest: match[2] };
-  return { tag: "", rest: guideline };
-}
-
-// Just the clause number ("4.2") for the stat badge and the reference link.
-function guidelineNumber(guideline: string): string {
-  return guideline.match(/(\d+(?:\.\d+)*)/)?.[1] ?? "?";
-}
+// a quick fix, and a link to the real Apple clause. Below that, the locked $5
+// upsell to the deep, app-specific fix report.
 
 export default function RiskReport({
   diagnosis,
+  answers,
   onReset,
 }: {
   diagnosis: Diagnosis;
+  answers: Answers;
   onReset: () => void;
 }) {
   const v = VERDICT[diagnosis.riskLevel];
@@ -191,6 +170,12 @@ export default function RiskReport({
           </div>
         )}
       </section>
+
+      {/* The $5 upsell: the deep, app-specific fix report. Only worth showing
+          when there are flagged guidelines to actually fix. */}
+      {count > 0 && (
+        <UnlockPanel diagnosis={diagnosis} answers={answers} />
+      )}
 
       {/* App description = the reviewer's plain-English verdict. */}
       <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AccountMenu from "@/components/AccountMenu";
 import AppIcon, { VIBE_GRADIENT } from "@/components/AppIcon";
 import Questionnaire from "@/components/Questionnaire";
 import RiskReport from "@/components/RiskReport";
@@ -62,33 +63,38 @@ export default function Home() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-6 sm:px-8 sm:py-14">
-      {/* Slim brand bar — keeps the user oriented once the main panel stops
-          being VibeCheck's own listing. On idle, the full StoreHeader carries
-          the branding, so the bar would just double it. */}
-      {status !== "idle" && (
-        <div className="mb-8 flex items-center gap-2.5">
-          <AppIcon gradient={VIBE_GRADIENT} size="sm">
-            <svg viewBox="0 0 44 64" className="h-7" aria-hidden>
-              <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
-              <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
-              <path
-                d="M14 33l7 7 13-15.5"
-                fill="none"
-                stroke="#0a6cff"
-                strokeWidth="5.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </AppIcon>
-          <span className="text-sm font-semibold tracking-tight text-ink">
-            VibeCheck
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-            App Store
-          </span>
-        </div>
-      )}
+      {/* Top bar: brand on the left once the main panel stops being VibeCheck's
+          own listing (on idle the StoreHeader carries branding), account menu on
+          the right in every state. */}
+      <div className="mb-8 flex items-center justify-between gap-3">
+        {status !== "idle" ? (
+          <div className="flex items-center gap-2.5">
+            <AppIcon gradient={VIBE_GRADIENT} size="sm">
+              <svg viewBox="0 0 44 64" className="h-7" aria-hidden>
+                <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
+                <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
+                <path
+                  d="M14 33l7 7 13-15.5"
+                  fill="none"
+                  stroke="#0a6cff"
+                  strokeWidth="5.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </AppIcon>
+            <span className="text-sm font-semibold tracking-tight text-ink">
+              VibeCheck
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              App Store
+            </span>
+          </div>
+        ) : (
+          <span aria-hidden />
+        )}
+        <AccountMenu />
+      </div>
 
       {status === "idle" && (
         <div className="space-y-6 sm:space-y-8">
@@ -124,7 +130,7 @@ export default function Home() {
       )}
 
       {status === "report" && diagnosis && (
-        <RiskReport diagnosis={diagnosis} onReset={reset} />
+        <RiskReport diagnosis={diagnosis} answers={answers} onReset={reset} />
       )}
 
       {status === "error" && (
