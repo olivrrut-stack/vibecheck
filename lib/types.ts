@@ -40,6 +40,33 @@ export interface Diagnosis {
   verdict: string;
 }
 
+/**
+ * One guideline's deep remediation. Part of the paid ($5) fix report, written by
+ * a second, deeper AI call from the saved answers + diagnosis. Distinct from the
+ * free one-line `Risk.fix`: this is the fleshed-out, app-specific plan.
+ */
+export interface DeepFix {
+  /** Matches a flagged guideline, e.g. "Guideline 4.2: Minimum Functionality". */
+  guideline: string;
+  /** Why THIS app, given their answers, trips this specific clause. */
+  rootCause: string;
+  /** Concrete, step-by-step changes in plain English. */
+  whatToChange: string;
+  /** A worked example tailored to the app's inferred category. */
+  workedExample: string;
+  /** What App Review needs to see to clear it. */
+  reviewerWants: string;
+  /** Copy-paste wording for the App Store "App Review Notes" field. */
+  reviewNotes: string;
+}
+
+/** The $5 deliverable: a deep, app-specific remediation report. */
+export interface FixReport {
+  /** One short paragraph framing the path from current risk to approval. */
+  summary: string;
+  fixes: DeepFix[];
+}
+
 // ---- Questionnaire option lists (single source of truth for the UI) ----
 
 export const DATA_PRACTICES = [

@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { extractJson } from "@/lib/aiJson";
 import { SYSTEM_PROMPT } from "@/lib/prompt";
 import {
   RATE_LIMIT,
@@ -74,24 +75,6 @@ function buildUserMessage(a: Answers): string {
     }`,
     `Q5. Native capabilities the app actually uses: ${list(a.nativeFeatures)}`,
   ].join("\n");
-}
-
-// Pull the JSON object out of the response. The json_schema output format means
-// it's almost always clean JSON, so try that first; only fall back to fence /
-// brace extraction if the model wrapped it in prose.
-function extractJson(text: string): unknown {
-  const trimmed = text.trim();
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    // not bare JSON — fall through
-  }
-  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const candidate = fenced ? fenced[1] : trimmed;
-  const start = candidate.indexOf("{");
-  const end = candidate.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("No JSON object in response");
-  return JSON.parse(candidate.slice(start, end + 1));
 }
 
 function isValidDiagnosis(value: unknown): value is Diagnosis {
