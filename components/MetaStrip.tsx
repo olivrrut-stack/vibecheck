@@ -23,14 +23,14 @@ export default function MetaStrip({ cells }: { cells: MetaCell[] }) {
         <div
           key={i}
           role="listitem"
-          className={`flex min-w-0 flex-1 flex-col items-center justify-center px-1 text-center first:pl-0 last:pr-0 sm:min-w-[60px] sm:px-2 ${
+          className={`flex min-w-[60px] flex-1 flex-col items-center justify-center px-2 text-center first:pl-0 last:pr-0 ${
             i > 0 ? "border-l border-line" : ""
           }`}
         >
-          <div className="flex items-center justify-center text-[10px] font-bold leading-none text-ink whitespace-nowrap sm:text-sm">
+          <div className="flex items-center justify-center text-sm font-bold leading-none text-ink whitespace-nowrap">
             {cell.value}
           </div>
-          <div className="mt-1 font-mono text-[8px] uppercase tracking-normal text-ink-muted whitespace-nowrap sm:mt-1.5 sm:text-[10px] sm:tracking-[0.14em]">
+          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-muted whitespace-nowrap">
             {cell.label}
           </div>
         </div>

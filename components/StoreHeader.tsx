@@ -61,7 +61,7 @@ export default function StoreHeader() {
                 >
                   <svg
                     viewBox="0 0 24 24"
-                    className="h-4 w-4 sm:h-[18px] sm:w-[18px]"
+                    className="h-[18px] w-[18px]"
                     fill="currentColor"
                     aria-hidden
                   >
