@@ -39,7 +39,7 @@ export default function StoreHeader() {
         </div>
       </div>
 
-      <p className="mt-5 max-w-xl text-[15px] leading-snug text-ink sm:text-base">
+      <p className="mt-5 max-w-xl text-lg font-semibold leading-snug tracking-tight text-ink sm:text-xl">
         Know what Apple will flag, while every fix still takes minutes.
       </p>
 
@@ -71,7 +71,7 @@ export default function StoreHeader() {
               ),
               label: "GitHub",
             },
-            { value: "3rd party", label: "AI reviewer" },
+            { value: "3rd party", label: "Review" },
           ]}
         />
       </div>

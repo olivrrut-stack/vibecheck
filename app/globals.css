@@ -41,12 +41,17 @@
 html {
   background-color: var(--color-canvas);
   color-scheme: light;
+  /* Never let stray child overflow scroll the whole page sideways on mobile.
+     The gallery and metadata strip keep their own overflow-x-auto, so their
+     intended horizontal scroll is unaffected. */
+  overflow-x: hidden;
 }
 
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  overflow-x: hidden;
 }
 
 /* Visible, on-brand keyboard focus everywhere. The outline follows the
