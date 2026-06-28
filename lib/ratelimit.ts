@@ -10,7 +10,7 @@ import { Redis } from "@upstash/redis";
 // warm instance keeps its own map. Set UPSTASH_REDIS_REST_URL/TOKEN (or the
 // KV_REST_API_* pair from a Vercel KV store) to switch to the robust path.
 
-const LIMIT = 3; // checks allowed per IP per window
+const LIMIT = 5; // checks allowed per IP per window
 const WINDOW = "1 h"; // human window for Upstash
 const WINDOW_MS = 60 * 60 * 1000; // same window for the in-memory fallback
 
