@@ -79,6 +79,20 @@ export default function PrivacyPage() {
         <a href={`mailto:${CONTACT}`}>{CONTACT}</a> and we will remove it.
       </p>
 
+      <h2>Your rights</h2>
+      <p>
+        Depending on where you live (for example under GDPR or CCPA), you can ask
+        us to show you the data we hold about you, correct it, delete it, or
+        export it, and you can object to certain processing. We do not sell your
+        personal information. To exercise any of these, email{" "}
+        <a href={`mailto:${CONTACT}`}>{CONTACT}</a> from your account address and
+        we will respond within a reasonable time.
+      </p>
+      <p>
+        Our processors may handle data in countries other than yours. We only use
+        providers that offer appropriate safeguards for that transfer.
+      </p>
+
       <h2>Children</h2>
       <p>VibeCheck is for developers and is not directed at children under 13.</p>
 

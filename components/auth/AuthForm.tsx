@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 
@@ -137,6 +138,23 @@ export default function AuthForm({
               ? "Create account"
               : "Log in"}
         </button>
+
+        {mode === "signup" && (
+          <p className="mt-3 text-center text-xs leading-relaxed text-ink-faint">
+            By creating an account you agree to our{" "}
+            <Link href="/terms" className="text-ink-muted underline hover:text-ink">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="text-ink-muted underline hover:text-ink"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        )}
       </form>
 
       <p className="mt-4 text-center text-sm text-ink-muted">

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { Answers, Diagnosis } from "@/lib/types";
 import AuthForm from "./auth/AuthForm";
@@ -220,6 +221,18 @@ export default function UnlockPanel({
                 Secure checkout by Stripe. Card never touches our servers.
               </span>
             </div>
+
+            <p className="mt-3 text-xs leading-relaxed text-ink-faint">
+              $5, one time, for this report. By paying you agree to our{" "}
+              <Link href="/terms" className="text-ink-muted underline hover:text-ink">
+                Terms
+              </Link>{" "}
+              and{" "}
+              <Link href="/refund" className="text-ink-muted underline hover:text-ink">
+                Refund Policy
+              </Link>
+              , and you confirm the report is generated immediately on purchase.
+            </p>
           </div>
         )}
       </div>

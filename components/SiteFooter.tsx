@@ -35,6 +35,13 @@ export default function SiteFooter() {
         rejection. Always read Apple&rsquo;s guidelines and use your own
         judgment.
       </p>
+      <p className="mt-2 max-w-2xl text-xs leading-relaxed text-ink-faint">
+        Apple&reg;, App Store&reg;, and related marks are trademarks of Apple
+        Inc., registered in the U.S. and other countries. VibeCheck is an
+        independent tool and is not affiliated with, endorsed by, sponsored by,
+        or approved by Apple Inc. &ldquo;App Store&rdquo; is used only to
+        identify the review process this tool helps with.
+      </p>
     </footer>
   );
 }
