@@ -32,15 +32,16 @@ export default function StoreHeader() {
             App Rejection Risk Checker
           </p>
           <div className="mt-3">
-            <span className="inline-flex rounded-full bg-accent px-6 py-1.5 text-sm font-semibold text-white">
-              FREE
+            <span className="inline-flex rounded-full bg-accent px-5 py-1.5 text-sm font-semibold text-white">
+              Free check
             </span>
           </div>
         </div>
       </div>
 
       <p className="mt-5 max-w-xl text-lg font-semibold leading-snug tracking-tight text-ink sm:text-xl">
-        Know what Apple will flag, while every fix still takes minutes.
+        The rejection-risk check is free. When you&rsquo;re ready, unlock the
+        exact fixes, written for your app, for $5.
       </p>
 
       <div className="mt-5 border-y border-line py-4">
