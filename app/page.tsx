@@ -87,9 +87,6 @@ export default function Home() {
             <span className="text-sm font-semibold tracking-tight text-ink">
               VibeCheck
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-              App Store
-            </span>
           </div>
         ) : (
           <span aria-hidden />

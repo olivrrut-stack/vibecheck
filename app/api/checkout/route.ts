@@ -87,7 +87,7 @@ export async function POST(req: Request) {
             product_data: {
               name: "VibeCheck Fix Report",
               description:
-                "Deep, app-specific fixes for every App Store guideline you were flagged on.",
+                "Deep, app-specific fixes for every Apple review guideline you were flagged on.",
             },
           },
         },

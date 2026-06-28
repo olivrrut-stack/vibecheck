@@ -29,7 +29,7 @@ export default function StoreHeader() {
             VibeCheck
           </h1>
           <p className="mt-0.5 text-sm text-accent">
-            App Store Rejection Risk Checker
+            App Rejection Risk Checker
           </p>
           <div className="mt-3">
             <span className="inline-flex rounded-full bg-accent px-6 py-1.5 text-sm font-semibold text-white">
@@ -46,10 +46,10 @@ export default function StoreHeader() {
       <div className="mt-5 border-y border-line py-4">
         <MetaStrip
           cells={[
-            { value: "FREE", label: "Price" },
+            { value: "Free", label: "Check" },
             { value: "5", label: "Questions" },
             { value: "~10s", label: "Result" },
-            { value: "0", label: "Accounts" },
+            { value: "$5", label: "Fixes" },
             {
               value: (
                 <a

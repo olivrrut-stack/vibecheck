@@ -28,7 +28,7 @@ export async function generateMetadata({
   const v = VERDICT[parsed.level];
   const title = `This AI-built app scored ${parsed.score}/100 on VibeCheck — ${v.pill}`;
   const description =
-    "Find out if your AI-built app will get flagged by Apple before you submit. Free, no account.";
+    "Find out if your AI-built app will get flagged by Apple before you submit. Free check, with deep fixes for $5.";
   return {
     title,
     description,
@@ -67,7 +67,7 @@ export default async function ResultPage({ params }: { params: Params }) {
 
       <div className="w-full rounded-[var(--radius-card)] border border-line bg-surface p-7 shadow-card sm:p-8">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
-          App Store rejection risk
+          App rejection risk
         </p>
         <div className="mt-3">
           <span
@@ -99,7 +99,7 @@ export default async function ResultPage({ params }: { params: Params }) {
         </svg>
       </Link>
       <p className="mt-3 text-xs text-ink-faint">
-        Free. No account. Takes about 10 seconds.
+        Free check. Takes about 10 seconds.
       </p>
     </main>
   );

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 // Social share card. Mirrors the in-app brand (dark canvas, gradient squircle,
 // the verdict pill) so a shared link previews as the App Store listing concept.
-export const alt = "VibeCheck: App Store rejection risk checker";
+export const alt = "VibeCheck: App rejection risk checker";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -53,7 +53,7 @@ export default function OpengraphImage() {
               VibeCheck
             </div>
             <div style={{ fontSize: "28px", color: "#0a84ff" }}>
-              App Store Rejection Risk Checker
+              App Rejection Risk Checker
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function OpengraphImage() {
               Looks Clear
             </div>
             <div style={{ fontSize: "26px", color: "#8a8a93" }}>
-              Free · No account · Answer 5 questions
+              Free check · 5 questions · Fixes for $5
             </div>
           </div>
         </div>
