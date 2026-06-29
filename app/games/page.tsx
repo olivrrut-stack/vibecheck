@@ -11,7 +11,9 @@ export const metadata: Metadata = {
 // darkens the page background so the whole checker reuses as-is.
 export default function GamesPage() {
   return (
-    <div data-track="game">
+    // bg-canvas (the dark token, scoped here) covers the viewport even if a
+    // browser lacks :has() support, so no white edge shows on overscroll.
+    <div data-track="game" className="min-h-dvh bg-canvas">
       <CheckerExperience track="game" />
     </div>
   );

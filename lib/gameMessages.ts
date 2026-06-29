@@ -66,8 +66,3 @@ export function buildGameFixesMessage(
     `Q6. Audience and data: ${list(answers.audienceData)}`,
   ].join("\n");
 }
-
-/** The gating free-text answer for the game track (parallels app's safariDiff). */
-export function gamePrimaryText(a: GameAnswers): string {
-  return a.originality ?? "";
-}

@@ -72,7 +72,7 @@ function FixCard({ fix }: { fix: DeepFix }) {
       </div>
 
       <div className="mt-5 space-y-5 border-t border-line pt-5">
-        <FixPart label="Why this matters for your app">{fix.rootCause}</FixPart>
+        <FixPart label="Why this matters">{fix.rootCause}</FixPart>
         <FixPart label="What to change">{fix.whatToChange}</FixPart>
         <FixPart label="Worked example">{fix.workedExample}</FixPart>
         <FixPart label="What the reviewer wants">{fix.reviewerWants}</FixPart>
