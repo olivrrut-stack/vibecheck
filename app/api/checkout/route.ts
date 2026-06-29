@@ -107,9 +107,10 @@ export async function POST(req: Request) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      // Explicitly accept cards so checkout works on a fresh account without
-      // first activating payment methods in the Stripe dashboard.
-      payment_method_types: ["card"],
+      // Omit payment_method_types so Stripe uses dynamic payment methods from
+      // the Dashboard config: this is what surfaces Apple Pay, Google Pay, and
+      // Link automatically on supported devices (Apple Pay is a card wallet, not
+      // a value you can list explicitly). Card stays enabled by default.
       // Inline price so no Stripe Product/Price needs pre-creating.
       line_items: [
         {

@@ -154,7 +154,14 @@ export async function generateFixReport(
     model: "claude-sonnet-4-6",
     max_tokens: 14000,
     thinking: { type: "adaptive" },
-    system: track === "game" ? GAME_FIXES_SYSTEM_PROMPT : FIXES_SYSTEM_PROMPT,
+    // Cache the large fixes system prompt: cheaper + faster on warm calls.
+    system: [
+      {
+        type: "text",
+        text: track === "game" ? GAME_FIXES_SYSTEM_PROMPT : FIXES_SYSTEM_PROMPT,
+        cache_control: { type: "ephemeral" },
+      },
+    ],
     output_config: {
       effort: "low",
       format: { type: "json_schema", schema: FIXES_SCHEMA },

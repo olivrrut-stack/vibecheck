@@ -193,7 +193,17 @@ export async function POST(req: Request) {
       // small, but reasoning needs room — too low a cap truncates the response.
       max_tokens: 8000,
       thinking: { type: "adaptive" },
-      system: track === "game" ? GAME_SYSTEM_PROMPT : SYSTEM_PROMPT,
+      // Cache the large system prompt: warm calls (e.g. a traffic spike within
+      // the ~5min cache window) skip re-processing it, cutting latency and input
+      // cost with zero change to the output. No-op if the prompt is ever too
+      // short to cache.
+      system: [
+        {
+          type: "text",
+          text: track === "game" ? GAME_SYSTEM_PROMPT : SYSTEM_PROMPT,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
       output_config: {
         // This is a well-scoped judgment task — low effort keeps latency to a
         // few seconds (the brief's promise) without hurting answer quality.
