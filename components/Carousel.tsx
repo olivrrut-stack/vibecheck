@@ -82,7 +82,7 @@ export default function Carousel({
       <div
         ref={trackRef}
         aria-label={ariaLabel}
-        className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-5 pb-2 sm:mx-0 sm:px-0 [scrollbar-width:none] [mask-image:linear-gradient(to_right,#000_calc(100%-32px),transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_calc(100%-32px),transparent)] [&::-webkit-scrollbar]:hidden"
+        className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-5 pb-2 sm:mx-0 sm:px-0 [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,#000_32px,#000_calc(100%-32px),transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_32px,#000_calc(100%-32px),transparent)] [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item, i) => (
           <div
