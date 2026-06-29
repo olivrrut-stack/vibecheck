@@ -23,7 +23,7 @@ export default function MetaStrip({ cells }: { cells: MetaCell[] }) {
         <div
           key={i}
           role="listitem"
-          className={`flex min-w-[60px] flex-1 flex-col items-center justify-center px-2 text-center first:pl-0 last:pr-0 ${
+          className={`flex min-w-max flex-1 flex-col items-center justify-center px-3 text-center first:pl-0 last:pr-0 ${
             i > 0 ? "border-l border-line" : ""
           }`}
         >
