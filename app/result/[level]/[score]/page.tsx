@@ -36,7 +36,7 @@ export async function generateMetadata({
   const parsed = parse(level, score);
   if (!parsed) return { title: "VibeCheck" };
   const v = VERDICT[parsed.level];
-  const title = `This AI-built ${cfg.noun} scored ${parsed.score}/100 on VibeCheck — ${v.pill}`;
+  const title = `This AI-built ${cfg.noun} scored ${parsed.score}/100 on VibeCheck: ${v.pill}`;
   const description = `Find out if your AI-built ${cfg.noun} will get flagged by Apple before you submit. Free check, with deep fixes for ${cfg.priceLabel}.`;
   const ogUrl = `/api/og?level=${parsed.level}&score=${parsed.score}&track=${track}`;
   return {

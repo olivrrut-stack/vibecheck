@@ -147,7 +147,7 @@ export default function UnlockPanel({
                 disabled={loading}
                 className="rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {hasFlags ? `Get my fixes — ${price}` : `Get my report — ${price}`}
+                {hasFlags ? `Get my fixes for ${price}` : `Get my report for ${price}`}
               </button>
               <span className="text-xs text-ink-faint">
                 One-time, per report. Saved to your account forever.

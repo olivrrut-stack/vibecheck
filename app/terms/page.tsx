@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import LegalLayout from "@/components/LegalLayout";
 
-export const metadata: Metadata = { title: "Terms of Service — VibeCheck" };
+export const metadata: Metadata = { title: "Terms of Service · VibeCheck" };
 
 const CONTACT = "support@vibecheckhq.app";
 
