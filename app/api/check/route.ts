@@ -40,9 +40,8 @@ const OUTPUT_SCHEMA = {
         properties: {
           guideline: { type: "string" },
           reason: { type: "string" },
-          fix: { type: "string" },
         },
-        required: ["guideline", "reason", "fix"],
+        required: ["guideline", "reason"],
         additionalProperties: false,
       },
     },
@@ -98,8 +97,7 @@ function isValidDiagnosis(value: unknown): value is Diagnosis {
     const risk = r as Record<string, unknown>;
     return (
       typeof risk.guideline === "string" &&
-      typeof risk.reason === "string" &&
-      typeof risk.fix === "string"
+      typeof risk.reason === "string"
     );
   });
 }

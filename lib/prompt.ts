@@ -38,8 +38,7 @@ Return your response as JSON in exactly this format:
   risks: [
     {
       guideline: 'Guideline 4.2: Minimum Functionality',
-      reason: 'string explaining why based on their answers',
-      fix: 'string with specific fix in plain English'
+      reason: 'string explaining why based on their answers'
     }
   ],
   verdict: 'string, one paragraph plain English summary'
@@ -137,8 +136,7 @@ Return your response as JSON in exactly this format:
   risks: [
     {
       guideline: 'Guideline 5.2: Intellectual Property',
-      reason: 'string explaining why based on their answers',
-      fix: 'string with specific fix in plain English'
+      reason: 'string explaining why based on their answers'
     }
   ],
   verdict: 'string, one paragraph plain English summary'

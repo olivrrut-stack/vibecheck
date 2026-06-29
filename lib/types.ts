@@ -33,8 +33,6 @@ export interface Risk {
   guideline: string;
   /** Why their specific answers triggered this risk. */
   reason: string;
-  /** The exact fix in plain English. */
-  fix: string;
 }
 
 export interface Diagnosis {
