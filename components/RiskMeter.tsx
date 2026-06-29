@@ -15,7 +15,7 @@ export default function RiskMeter({
         <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Rejection risk
         </span>
-        <span className="font-display font-bold tabular-nums" style={{ color }}>
+        <span className="font-sans font-bold tabular-nums" style={{ color }}>
           <span className="text-4xl">{pct}</span>
           <span className="text-sm font-semibold text-ink-faint"> / 100</span>
         </span>

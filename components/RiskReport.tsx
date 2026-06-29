@@ -124,11 +124,6 @@ export default function RiskReport({
                       {risk.reason}
                     </p>
 
-                    <p className="mt-2.5 text-sm leading-relaxed text-ink">
-                      <span className="font-semibold">Quick fix: </span>
-                      {risk.fix}
-                    </p>
-
                     <a
                       href={guidelineHref(num)}
                       target="_blank"
