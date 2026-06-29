@@ -2,8 +2,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BrandBar from "@/components/BrandBar";
 import FixReportView from "@/components/FixReportView";
+import TrackTheme from "@/components/TrackTheme";
 import { getReportById } from "@/lib/reports";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Track } from "@/lib/types";
 import { VERDICT } from "@/lib/verdict";
 
 // One purchased report's deep fixes. Server rendered with a strict ownership +
@@ -28,6 +30,7 @@ export default async function ReportDetailPage({
   if (!report || report.user_id !== user.id || !report.paid) notFound();
 
   const v = VERDICT[report.diagnosis.riskLevel];
+  const track: Track = report.diagnosis.track === "game" ? "game" : "app";
   const date = new Date(report.created_at).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
@@ -35,15 +38,16 @@ export default async function ReportDetailPage({
   });
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-6 sm:px-8 sm:py-12">
-      <BrandBar />
+    <TrackTheme track={track}>
+      <main className="mx-auto w-full max-w-2xl px-5 py-6 sm:px-8 sm:py-12">
+        <BrandBar />
 
-      <Link
-        href="/reports"
-        className="mb-5 inline-flex items-center gap-1 text-sm text-ink-muted transition-colors hover:text-ink"
-      >
-        ← My reports
-      </Link>
+        <Link
+          href="/reports"
+          className="mb-5 inline-flex items-center gap-1 text-sm text-ink-muted transition-colors hover:text-ink"
+        >
+          ← My reports
+        </Link>
 
       <header className="mb-6">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
@@ -75,6 +79,7 @@ export default async function ReportDetailPage({
           </p>
         </div>
       )}
-    </main>
+      </main>
+    </TrackTheme>
   );
 }

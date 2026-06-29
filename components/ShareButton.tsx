@@ -1,23 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import type { RiskLevel } from "@/lib/types";
+import type { RiskLevel, Track } from "@/lib/types";
 
 // Shares a stateless link to /result/<level>/<score>. No account, no stored
-// data: the score rides in the URL and the result page renders from it. Uses
-// the native share sheet on mobile, falls back to copying the link.
+// data: the score rides in the URL and the result page renders from it. The
+// track rides along as ?track=game so the shared page + link preview render in
+// the matching theme. Uses the native share sheet on mobile, falls back to copy.
 export default function ShareButton({
   score,
   level,
+  track = "app",
 }: {
   score: number;
   level: RiskLevel;
+  track?: Track;
 }) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
-    const url = `${window.location.origin}/result/${level}/${score}`;
-    const text = `My AI-built app scored ${score}/100 on VibeCheck.`;
+    const query = track === "game" ? "?track=game" : "";
+    const url = `${window.location.origin}/result/${level}/${score}${query}`;
+    const noun = track === "game" ? "game" : "app";
+    const text = `My AI-built ${noun} scored ${score}/100 on VibeCheck.`;
     if (navigator.share) {
       try {
         await navigator.share({ title: "VibeCheck", text, url });

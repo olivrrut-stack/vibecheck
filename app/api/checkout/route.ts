@@ -128,8 +128,8 @@ export async function POST(req: Request) {
       customer_email: user.email,
       client_reference_id: user.id,
       metadata: { reportId, userId: user.id },
-      success_url: `${origin}/unlock?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/?checkout=cancelled`,
+      success_url: `${origin}/unlock?session_id={CHECKOUT_SESSION_ID}&track=${track}`,
+      cancel_url: `${origin}${cfg.href}?checkout=cancelled`,
     });
 
     await attachStripeSession(reportId, session.id);

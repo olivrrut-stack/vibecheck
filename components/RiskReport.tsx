@@ -195,7 +195,7 @@ export default function RiskReport({
       </section>
 
       <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-        <ShareButton score={diagnosis.score} level={diagnosis.riskLevel} />
+        <ShareButton score={diagnosis.score} level={diagnosis.riskLevel} track={track} />
         <button
           type="button"
           onClick={onReset}
