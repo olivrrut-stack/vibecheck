@@ -7,22 +7,30 @@ function PhoneIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
       <rect x="7" y="2.5" width="10" height="19" rx="2.6" />
-      <line x1="10.5" y1="18.5" x2="13.5" y2="18.5" strokeLinecap="round" />
+      {/* notch at the top */}
+      <line x1="10.4" y1="4.7" x2="13.6" y2="4.7" strokeLinecap="round" />
     </svg>
   );
 }
 
+// Top-down view of a gamepad: rounded body with two lower grips, a d-pad cross
+// on the left and two action buttons on the right.
 function ControllerIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
-      <path
-        d="M7 8h10a4.5 4.5 0 0 1 4.5 4.5 3.2 3.2 0 0 1-5.8 1.9l-.5-.7H8.8l-.5.7A3.2 3.2 0 0 1 2.5 12.5 4.5 4.5 0 0 1 7 8z"
-        strokeLinejoin="round"
-      />
-      <line x1="6.4" y1="11" x2="6.4" y2="13.4" strokeLinecap="round" />
-      <line x1="5.2" y1="12.2" x2="7.6" y2="12.2" strokeLinecap="round" />
-      <circle cx="15.6" cy="11.4" r="0.95" fill="currentColor" stroke="none" />
-      <circle cx="17.6" cy="13" r="0.95" fill="currentColor" stroke="none" />
+    <svg
+      viewBox="0 0 24 24"
+      className="h-[18px] w-[18px]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M8 8h8a5 5 0 0 1 5 5c0 1.66-1.34 3-3 3-1.02 0-1.92-.51-2.46-1.29L14.8 14H9.2l-.74.71A2.98 2.98 0 0 1 6 16c-1.66 0-3-1.34-3-3a5 5 0 0 1 5-5z" />
+      <path d="M6.4 11.5v2M5.4 12.5h2" />
+      <circle cx="15" cy="11.4" r="0.75" fill="currentColor" stroke="none" />
+      <circle cx="16.9" cy="13" r="0.75" fill="currentColor" stroke="none" />
     </svg>
   );
 }

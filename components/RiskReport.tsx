@@ -6,7 +6,7 @@ import {
 import { getTrack } from "@/lib/tracks";
 import type { Answers, Diagnosis, GameAnswers } from "@/lib/types";
 import { VERDICT } from "@/lib/verdict";
-import AppIcon, { NEUTRAL_GRADIENT } from "./AppIcon";
+import AppIcon from "./AppIcon";
 import MetaStrip from "./MetaStrip";
 import RiskMeter from "./RiskMeter";
 import ShareButton from "./ShareButton";
@@ -39,7 +39,12 @@ export default function RiskReport({
       {/* Product header for "their app", with the verdict as the Get button. */}
       <header className="vc-rise">
         <div className="flex items-start gap-4 sm:gap-5">
-          <AppIcon gradient={NEUTRAL_GRADIENT} size="lg">
+          {/* Tint the result tile with the verdict color so the icon, pill,
+              and meter all speak the same status color. */}
+          <AppIcon
+            gradient={`linear-gradient(160deg, ${v.colorVar} 0%, color-mix(in srgb, ${v.colorVar} 58%, #0a0a0b) 100%)`}
+            size="lg"
+          >
             <span className="text-3xl font-bold text-white">?</span>
           </AppIcon>
           <div className="min-w-0 flex-1 pt-0.5">
