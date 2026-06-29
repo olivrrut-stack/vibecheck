@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountMenu from "@/components/AccountMenu";
 import BrandIcon from "@/components/BrandIcon";
 import GameQuestionnaire from "@/components/GameQuestionnaire";
@@ -43,6 +43,12 @@ export default function CheckerExperience({ track }: { track: Track }) {
   const [answers, setAnswers] = useState<Answers | GameAnswers>(empty);
   const [diagnosis, setDiagnosis] = useState<Diagnosis | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Remember which section you're in so the shared account pages (My reports,
+  // login) follow its theme: app = light, game = dark.
+  useEffect(() => {
+    document.cookie = `vc_track=${track};path=/;max-age=2592000;samesite=lax`;
+  }, [track]);
 
   async function runCheck() {
     setStatus("loading");

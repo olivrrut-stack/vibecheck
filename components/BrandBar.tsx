@@ -1,27 +1,15 @@
 import Link from "next/link";
+import type { Track } from "@/lib/types";
 import AccountMenu from "./AccountMenu";
-import AppIcon, { VIBE_GRADIENT } from "./AppIcon";
+import BrandIcon from "./BrandIcon";
 
-// Slim top bar shared by the secondary pages (login aside): brand link on the
-// left, account menu on the right. Mirrors the top bar on the main page.
-export default function BrandBar() {
+// Slim top bar shared by the secondary pages: brand link on the left, account
+// menu on the right. Track-aware so the brand icon matches the page theme.
+export default function BrandBar({ track = "app" }: { track?: Track }) {
   return (
     <div className="mb-8 flex items-center justify-between gap-3">
-      <Link href="/" className="flex items-center gap-2.5">
-        <AppIcon gradient={VIBE_GRADIENT} size="sm">
-          <svg viewBox="0 0 44 64" className="h-7" aria-hidden>
-            <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
-            <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
-            <path
-              d="M14 33l7 7 13-15.5"
-              fill="none"
-              stroke="#0a6cff"
-              strokeWidth="5.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </AppIcon>
+      <Link href={track === "game" ? "/games" : "/"} className="flex items-center gap-2.5">
+        <BrandIcon track={track} size="sm" />
         <span className="text-sm font-semibold tracking-tight text-ink">
           VibeCheck
         </span>

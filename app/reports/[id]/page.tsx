@@ -40,7 +40,7 @@ export default async function ReportDetailPage({
   return (
     <TrackTheme track={track}>
       <main className="mx-auto w-full max-w-2xl px-5 py-6 sm:px-8 sm:py-12">
-        <BrandBar />
+        <BrandBar track={track} />
 
         <Link
           href="/reports"

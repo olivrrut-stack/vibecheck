@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import BrandBar from "@/components/BrandBar";
+import TrackTheme from "@/components/TrackTheme";
 import { listReportsForUser } from "@/lib/reports";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { guidelineNumber } from "@/lib/guidelines";
+import { getTrackFromCookie } from "@/lib/trackCookie";
 import { VERDICT } from "@/lib/verdict";
 
 // A logged-in user's library of purchased reports, newest first. Server
 // rendered: the session comes from cookies, the rows from the service role.
+// Themed to whichever section the user is in (app light, game dark).
 export const dynamic = "force-dynamic";
 
 export default async function ReportsPage() {
@@ -18,10 +21,12 @@ export default async function ReportsPage() {
   if (!user) redirect("/login?next=/reports");
 
   const reports = await listReportsForUser(user.id);
+  const track = await getTrackFromCookie();
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-6 sm:px-8 sm:py-12">
-      <BrandBar />
+    <TrackTheme track={track}>
+      <main className="mx-auto w-full max-w-2xl px-5 py-6 sm:px-8 sm:py-12">
+        <BrandBar track={track} />
 
       <header className="mb-6">
         <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
@@ -96,6 +101,7 @@ export default async function ReportsPage() {
           })}
         </ul>
       )}
-    </main>
+      </main>
+    </TrackTheme>
   );
 }
