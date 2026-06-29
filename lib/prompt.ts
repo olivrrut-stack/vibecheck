@@ -76,6 +76,7 @@ For each guideline in the report, produce:
 
 Also write:
 - summary: one short paragraph framing the overall path from their current risk level to approval.
+- subjectiveRisks: a list of subjective, reviewer-judgment concerns that are NOT written into any specific guideline but still get submissions rejected, because App Review is partly subjective and varies from reviewer to reviewer. Examples: borderline minimum functionality, thin or template-like or reskinned design, something that still feels like a web wrapper or a stock template even if technically fine, sparse content, or polish below what reviewers expect for the category. STRICT RULES: base every point ONLY on what the developer actually told you in their answers. Never invent details, never guess, and never speculate about anything they did not mention. If their answers do not give enough concrete signal to name a specific, grounded subjective risk, return an empty array. Zero points is the correct answer when you are unsure. Each point is an object: point is a short label, detail is why a reviewer might subjectively flag it given their specific answers plus one concrete way to reduce that risk.
 
 Be direct, specific, and practical. Always tie advice to their actual answers. Never be generic. Do not use em dashes anywhere in your output; use commas, colons, or periods instead.
 
@@ -90,6 +91,12 @@ Return your response as JSON in exactly this format:
       workedExample: 'string',
       reviewerWants: 'string',
       reviewNotes: 'string'
+    }
+  ],
+  subjectiveRisks: [
+    {
+      point: 'string',
+      detail: 'string'
     }
   ]
 }`;
@@ -170,6 +177,7 @@ For each guideline in the report, produce:
 
 Also write:
 - summary: one short paragraph framing the overall path from their current risk level to approval.
+- subjectiveRisks: a list of subjective, reviewer-judgment concerns that are NOT written into any specific guideline but still get submissions rejected, because App Review is partly subjective and varies from reviewer to reviewer. Examples: borderline minimum functionality, thin or template-like or reskinned design, something that still feels like a web wrapper or a stock template even if technically fine, sparse content, or polish below what reviewers expect for the category. STRICT RULES: base every point ONLY on what the developer actually told you in their answers. Never invent details, never guess, and never speculate about anything they did not mention. If their answers do not give enough concrete signal to name a specific, grounded subjective risk, return an empty array. Zero points is the correct answer when you are unsure. Each point is an object: point is a short label, detail is why a reviewer might subjectively flag it given their specific answers plus one concrete way to reduce that risk.
 
 Be direct, specific, and practical. Always tie advice to their actual answers. Never be generic. Do not use em dashes anywhere in your output; use commas, colons, or periods instead.
 
@@ -184,6 +192,12 @@ Return your response as JSON in exactly this format:
       workedExample: 'string',
       reviewerWants: 'string',
       reviewNotes: 'string'
+    }
+  ],
+  subjectiveRisks: [
+    {
+      point: 'string',
+      detail: 'string'
     }
   ]
 }`;

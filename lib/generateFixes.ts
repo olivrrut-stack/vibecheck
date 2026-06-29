@@ -45,8 +45,23 @@ const FIXES_SCHEMA = {
         additionalProperties: false,
       },
     },
+    // Subjective / reviewer-judgment risks, grounded only in their answers.
+    // Required so the model always returns the key, but it must be an empty
+    // array when their answers don't give enough signal.
+    subjectiveRisks: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          point: { type: "string" },
+          detail: { type: "string" },
+        },
+        required: ["point", "detail"],
+        additionalProperties: false,
+      },
+    },
   },
-  required: ["summary", "fixes"],
+  required: ["summary", "fixes", "subjectiveRisks"],
   additionalProperties: false,
 } as const;
 
@@ -65,6 +80,9 @@ export function isValidFixReport(value: unknown): value is FixReport {
   const v = value as Record<string, unknown>;
   if (typeof v.summary !== "string") return false;
   if (!Array.isArray(v.fixes)) return false;
+  // subjectiveRisks is optional/tolerant: if present it must be an array.
+  if (v.subjectiveRisks !== undefined && !Array.isArray(v.subjectiveRisks))
+    return false;
   return v.fixes.every((f) => {
     if (!f || typeof f !== "object") return false;
     const fix = f as Record<string, unknown>;

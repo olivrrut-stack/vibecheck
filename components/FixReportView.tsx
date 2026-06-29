@@ -127,6 +127,29 @@ export default function FixReportView({ report }: { report: FixReport }) {
       {report.fixes.map((fix, i) => (
         <FixCard key={`${fix.guideline}-${i}`} fix={fix} />
       ))}
+
+      {report.subjectiveRisks && report.subjectiveRisks.length > 0 && (
+        <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">
+          <h2 className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+            Reviewer judgment calls
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            App Review is partly subjective and varies reviewer to reviewer.
+            These aren&rsquo;t hard guideline breaks, but they&rsquo;re where a
+            reviewer could still push back, based on what you told us.
+          </p>
+          <ul className="mt-4 space-y-4 border-t border-line pt-4">
+            {report.subjectiveRisks.map((risk, i) => (
+              <li key={i}>
+                <p className="text-sm font-bold text-ink">{risk.point}</p>
+                <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink-muted">
+                  {risk.detail}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

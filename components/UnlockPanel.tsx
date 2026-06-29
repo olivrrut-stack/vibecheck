@@ -56,6 +56,7 @@ export default function UnlockPanel({
         `A worked example built for your ${noun}'s category`,
         "What the reviewer needs to see to approve",
         "Paste-ready App Review notes to pre-clear it",
+        "Subjective, reviewer-judgment risks your answers reveal",
       ]
     : [
         `The guidelines a reviewer will still scrutinize for a ${noun} like yours`,
@@ -63,6 +64,7 @@ export default function UnlockPanel({
         `A worked example built for your ${noun}'s category`,
         "What the reviewer needs to see to approve on the first try",
         "Paste-ready App Review notes to pre-clear your submission",
+        "Subjective, reviewer-judgment risks your answers reveal",
       ];
   const heading = hasFlags
     ? `Get the exact fixes, written for your ${noun}`

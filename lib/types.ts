@@ -91,11 +91,26 @@ export interface DeepFix {
   reviewNotes: string;
 }
 
+/**
+ * A subjective, reviewer-judgment risk that isn't spelled out in a specific
+ * guideline but can still get an app rejected (design polish, borderline
+ * minimum functionality, reviewer-to-reviewer variance). Only ever grounded in
+ * the developer's own answers; the list is empty when there's not enough signal.
+ */
+export interface SubjectiveRisk {
+  /** Short label of the concern. */
+  point: string;
+  /** Why a reviewer might flag it given their answers, and how to reduce it. */
+  detail: string;
+}
+
 /** The $5 deliverable: a deep, app-specific remediation report. */
 export interface FixReport {
   /** One short paragraph framing the path from current risk to approval. */
   summary: string;
   fixes: DeepFix[];
+  /** Subjective/judgment-call risks. May be empty. Optional on old reports. */
+  subjectiveRisks?: SubjectiveRisk[];
 }
 
 /**
