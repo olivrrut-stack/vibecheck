@@ -14,7 +14,7 @@ export default function ScreenshotCard({
   children: ReactNode;
 }) {
   return (
-    <div className="flex h-full min-h-[516px] flex-col overflow-hidden rounded-[28px] border border-line bg-surface shadow-card">
+    <div className="flex h-full min-h-[440px] flex-col overflow-hidden rounded-[28px] border border-line bg-surface shadow-card">
       {/* Faux iOS status bar. */}
       <div className="flex items-center justify-between px-5 pt-3 text-ink-faint">
         <span className="font-mono text-[11px] font-medium tabular-nums">9:41</span>
@@ -41,14 +41,14 @@ export default function ScreenshotCard({
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col px-5 pb-6 pt-4">
+      <div className="flex flex-1 flex-col px-5 pb-5 pt-3">
         <p
           className="font-mono text-[11px] uppercase tracking-[0.2em]"
           style={accent ? { color: accent } : undefined}
         >
           <span className={accent ? "" : "text-ink-faint"}>{eyebrow}</span>
         </p>
-        <div className="mt-3 flex flex-1 flex-col">{children}</div>
+        <div className="mt-2.5 flex flex-1 flex-col">{children}</div>
       </div>
     </div>
   );

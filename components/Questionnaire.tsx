@@ -170,29 +170,31 @@ export default function Questionnaire({
       title="How did you build your app?"
       footer="Sets the context. VibeCheck is tuned for AI-built apps."
     >
-      {BUILD_TOOLS.map((tool) => (
+      <div className="grid grid-cols-2 gap-2">
+        {BUILD_TOOLS.map((tool) => (
+          <OptionRow
+            key={tool}
+            type="radio"
+            name="buildTool"
+            label={tool}
+            checked={!otherMode && value.buildTool === tool}
+            onChange={() => {
+              setOtherMode(false);
+              onChange({ ...value, buildTool: tool });
+            }}
+          />
+        ))}
         <OptionRow
-          key={tool}
           type="radio"
           name="buildTool"
-          label={tool}
-          checked={!otherMode && value.buildTool === tool}
+          label="Other"
+          checked={otherMode}
           onChange={() => {
-            setOtherMode(false);
-            onChange({ ...value, buildTool: tool });
+            setOtherMode(true);
+            onChange({ ...value, buildTool: "" });
           }}
         />
-      ))}
-      <OptionRow
-        type="radio"
-        name="buildTool"
-        label="Other"
-        checked={otherMode}
-        onChange={() => {
-          setOtherMode(true);
-          onChange({ ...value, buildTool: "" });
-        }}
-      />
+      </div>
       {otherMode && (
         <input
           type="text"
@@ -201,7 +203,7 @@ export default function Questionnaire({
           maxLength={60}
           placeholder="Which tool did you use?"
           aria-label="The tool you used to build your app"
-          className="mt-1 w-full rounded-lg border border-line-strong bg-surface-2 px-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent"
+          className="w-full rounded-lg border border-line-strong bg-surface-2 px-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent"
         />
       )}
     </QuestionCard>,
@@ -287,16 +289,18 @@ export default function Questionnaire({
       title="Which of these does your app use?"
       footer="Real native features count in your favor against 4.2."
     >
-      {NATIVE_FEATURES.map((feature) => (
-        <OptionRow
-          key={feature}
-          type="checkbox"
-          name="nativeFeatures"
-          label={feature}
-          checked={value.nativeFeatures.includes(feature)}
-          onChange={() => toggle("nativeFeatures", feature)}
-        />
-      ))}
+      <div className="grid grid-cols-2 gap-2">
+        {NATIVE_FEATURES.map((feature) => (
+          <OptionRow
+            key={feature}
+            type="checkbox"
+            name="nativeFeatures"
+            label={feature}
+            checked={value.nativeFeatures.includes(feature)}
+            onChange={() => toggle("nativeFeatures", feature)}
+          />
+        ))}
+      </div>
     </QuestionCard>,
   ];
 
