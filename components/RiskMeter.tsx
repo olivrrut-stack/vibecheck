@@ -12,12 +12,12 @@ export default function RiskMeter({
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Rejection risk
         </span>
-        <span className="font-display font-extrabold tabular-nums" style={{ color }}>
+        <span className="font-display font-bold tabular-nums" style={{ color }}>
           <span className="text-4xl">{pct}</span>
-          <span className="text-sm font-bold text-ink-faint"> / 100</span>
+          <span className="text-sm font-semibold text-ink-faint"> / 100</span>
         </span>
       </div>
 
@@ -39,7 +39,7 @@ export default function RiskMeter({
         />
       </div>
 
-      <div className="mt-1.5 flex justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">
+      <div className="mt-1.5 flex justify-between font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">
         <span>Clear</span>
         <span>Likely rejected</span>
       </div>

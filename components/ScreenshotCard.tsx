@@ -43,7 +43,7 @@ export default function ScreenshotCard({
 
       <div className="flex flex-1 flex-col px-5 pb-5 pt-3">
         <p
-          className="font-mono text-[11px] uppercase tracking-[0.2em]"
+          className="font-display text-[11px] uppercase tracking-[0.2em]"
           style={accent ? { color: accent } : undefined}
         >
           <span className={accent ? "" : "text-ink-faint"}>{eyebrow}</span>

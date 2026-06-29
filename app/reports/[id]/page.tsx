@@ -50,7 +50,7 @@ export default async function ReportDetailPage({
         </Link>
 
       <header className="mb-6">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Fix report · {date}
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-3">

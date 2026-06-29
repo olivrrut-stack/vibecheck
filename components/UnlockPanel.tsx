@@ -116,7 +116,7 @@ export default function UnlockPanel({
       <div className="border-b border-line bg-accent/[0.04] px-5 py-4 sm:px-6">
         <div className="flex items-center gap-2 text-accent">
           <LockGlyph />
-          <span className="font-mono text-xs uppercase tracking-[0.2em]">
+          <span className="font-display text-xs uppercase tracking-[0.2em]">
             {hasFlags ? "Full fix report" : "Full approval report"}
           </span>
         </div>
@@ -183,7 +183,7 @@ export default function UnlockPanel({
         {(step === "context" || step === "redirecting") && (
           <div className="mx-auto max-w-md">
             <label className="block">
-              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+              <span className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted">
                 Anything else about your {noun}? (optional)
               </span>
               <p className="mt-1 text-xs text-ink-faint">

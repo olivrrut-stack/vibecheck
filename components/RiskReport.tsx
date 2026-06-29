@@ -83,7 +83,7 @@ export default function RiskReport({
 
       {/* App Review Notes: one full-width panel, the width of the meter. */}
       <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">
-        <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <h3 className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           App Review Notes{count > 0 ? ` · ${count}` : ""}
         </h3>
 
@@ -186,7 +186,7 @@ export default function RiskReport({
 
       {/* App description = the reviewer's plain-English verdict. */}
       <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">
-        <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <h3 className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Reviewer&rsquo;s verdict
         </h3>
         <p className="mt-3 text-[15px] leading-relaxed text-ink sm:text-base">

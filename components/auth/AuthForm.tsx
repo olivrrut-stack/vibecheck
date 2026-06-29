@@ -90,7 +90,7 @@ export default function AuthForm({
 
       <form onSubmit={handleSubmit} className={heading ? "mt-5" : ""}>
         <label className="block">
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+          <span className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted">
             Email
           </span>
           <input
@@ -105,7 +105,7 @@ export default function AuthForm({
         </label>
 
         <label className="mt-4 block">
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+          <span className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted">
             Password
           </span>
           <input

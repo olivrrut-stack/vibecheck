@@ -41,7 +41,7 @@ function LoginInner() {
       </Link>
 
       <div className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-6 shadow-card sm:p-8">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Your account
         </p>
         <AuthForm

@@ -217,10 +217,10 @@ export default function GameQuestionnaire({
     >
       <div className="mb-3">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+          <span className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted">
             Progress
           </span>
-          <span className="font-mono text-[11px] tabular-nums text-ink-muted">
+          <span className="font-display text-[11px] tabular-nums text-ink-muted">
             {answeredCount} / 6 answered
           </span>
         </div>

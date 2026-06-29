@@ -27,7 +27,7 @@ export default function AccountMenu() {
     return (
       <Link
         href="/login"
-        className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted transition-colors hover:text-ink"
+        className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted transition-colors hover:text-ink"
       >
         Log in
       </Link>

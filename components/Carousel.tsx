@@ -131,7 +131,7 @@ export default function Carousel({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
+            <span className="font-display text-[10px] uppercase tracking-[0.14em]">
               Swipe
             </span>
           </span>

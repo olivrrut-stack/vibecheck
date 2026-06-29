@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Baloo_2, Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Nunito } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import "./globals.css";
 
@@ -14,12 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Rounded, bubbly display face used with restraint on the stat numbers and
-// labels (the metadata strip + the score) so they pop.
-const baloo = Baloo_2({
-  variable: "--font-baloo",
+// Rounded but grown-up display face for the structural label layer (metadata
+// strip, eyebrows, the score) so those read as one family and pop, without the
+// childish feel of a chunkier rounded font.
+const rounded = Nunito({
+  variable: "--font-rounded",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700", "800"],
 });
 
 // Resolves relative OG/icon URLs. Override with NEXT_PUBLIC_SITE_URL (e.g. preview deploys).
@@ -60,7 +61,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${baloo.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${rounded.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <AuthProvider>{children}</AuthProvider>

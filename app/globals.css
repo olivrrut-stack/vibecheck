@@ -30,8 +30,9 @@
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  /* Rounded display face for stat numbers + labels (font-display utility). */
-  --font-display: var(--font-baloo), ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  /* Rounded display face for the structural label layer (font-display utility):
+     metadata strip, eyebrows, the score. */
+  --font-display: var(--font-rounded), ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
 
   --radius-card: 14px;
 

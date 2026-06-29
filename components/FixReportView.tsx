@@ -43,7 +43,7 @@ function FixPart({
 }) {
   return (
     <div>
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+      <p className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted">
         {label}
       </p>
       <div className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink">
@@ -79,7 +79,7 @@ function FixCard({ fix }: { fix: DeepFix }) {
 
         <div>
           <div className="flex items-center justify-between gap-3">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+            <p className="font-display text-[11px] uppercase tracking-[0.16em] text-ink-muted">
               App Review notes (paste this)
             </p>
             <CopyNotes text={fix.reviewNotes} />
@@ -116,7 +116,7 @@ export default function FixReportView({ report }: { report: FixReport }) {
   return (
     <div className="space-y-6">
       <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <h2 className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Your path to approval
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink sm:text-base">

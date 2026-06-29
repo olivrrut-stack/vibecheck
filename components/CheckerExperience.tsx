@@ -102,7 +102,7 @@ export default function CheckerExperience({ track }: { track: Track }) {
           <StoreHeader track={track} />
           <section className="space-y-4 sm:space-y-5">
             <div>
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+              <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
                 Pre-submission review
               </p>
               <h2 className="mt-1.5 text-lg font-bold tracking-tight text-ink">
@@ -132,7 +132,7 @@ export default function CheckerExperience({ track }: { track: Track }) {
           <p className="mt-5 text-base font-medium text-ink">
             Submitting your {cfg.noun} for review…
           </p>
-          <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+          <p className="mt-2 font-display text-xs uppercase tracking-[0.18em] text-ink-faint">
             Checking against Apple&rsquo;s guidelines
           </p>
         </div>

@@ -18,7 +18,7 @@ export default function LegalLayout({
       <BrandBar />
 
       <header className="mb-6">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+        <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Legal
         </p>
         <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-ink">

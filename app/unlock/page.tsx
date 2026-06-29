@@ -81,7 +81,7 @@ function UnlockInner() {
           <p className="mt-5 text-base font-medium text-ink">
             Payment received. Writing your fixes…
           </p>
-          <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+          <p className="mt-2 font-display text-xs uppercase tracking-[0.18em] text-ink-faint">
             This takes up to a minute
           </p>
         </div>
@@ -138,7 +138,7 @@ function UnlockInner() {
     return (
       <div className="space-y-6">
         <header className="vc-rise">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+          <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
             Unlocked · Fix report
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-3">
