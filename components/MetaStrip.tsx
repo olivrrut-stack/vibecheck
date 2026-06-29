@@ -16,7 +16,7 @@ export interface MetaCell {
 export default function MetaStrip({ cells }: { cells: MetaCell[] }) {
   return (
     <div
-      className="flex w-full items-stretch overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="flex w-full items-stretch overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       role="list"
     >
       {cells.map((cell, i) => (

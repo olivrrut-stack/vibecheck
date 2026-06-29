@@ -41,9 +41,12 @@
 html {
   background-color: var(--color-canvas);
   color-scheme: light;
-  /* Never let stray child overflow scroll the whole page sideways on mobile.
-     The gallery and metadata strip keep their own overflow-x-auto, so their
-     intended horizontal scroll is unaffected. */
+  /* Never let stray child overflow scroll the whole page sideways. We use
+     `hidden` (not `clip`) on the root: `clip` on overflow-x forces overflow-y
+     to clip too, which would kill vertical page scroll. The real guard against
+     a carousel swipe dragging the page is `overscroll-x-contain` on the gallery
+     track. The gallery and metadata strip keep their own overflow-x-auto, so
+     their intended horizontal scroll is unaffected. */
   overflow-x: hidden;
 }
 
