@@ -13,12 +13,20 @@ import { useAuth } from "./auth/AuthProvider";
 
 type Step = "cta" | "auth" | "context" | "redirecting";
 
-const INCLUDES = [
+// What's in the report, worded for whichever case the result is in.
+const INCLUDES_FLAGGED = [
   "The root cause of each flag, tied to your answers",
   "Exactly what to change, step by step",
   "A worked example built for your app's category",
   "What the reviewer needs to see to approve",
   "Paste-ready App Review notes to pre-clear it",
+];
+const INCLUDES_CLEAN = [
+  "The guidelines a reviewer will still scrutinize for an app like yours",
+  "Exactly what to tighten to push your risk toward zero",
+  "A worked example built for your app's category",
+  "What the reviewer needs to see to approve on the first try",
+  "Paste-ready App Review notes to pre-clear your submission",
 ];
 
 function LockGlyph() {
@@ -58,6 +66,14 @@ export default function UnlockPanel({
   const [error, setError] = useState<string | null>(null);
 
   const q2Short = answers.safariDiff.trim().length < 40;
+  const hasFlags = diagnosis.risks.length > 0;
+  const includes = hasFlags ? INCLUDES_FLAGGED : INCLUDES_CLEAN;
+  const heading = hasFlags
+    ? "Get the exact fixes, written for your app"
+    : "Lock in your approval and drive the risk to zero";
+  const subhead = hasFlags
+    ? "The free notes tell you what’s wrong. This tells you precisely how to fix every flag and get approved."
+    : "You’re already low risk. This gives you the exact steps to make approval bulletproof and close the last gaps before you submit.";
 
   // Begin: logged-in users go straight to the optional context step; logged-out
   // users make an account first.
@@ -107,23 +123,20 @@ export default function UnlockPanel({
         <div className="flex items-center gap-2 text-accent">
           <LockGlyph />
           <span className="font-mono text-xs uppercase tracking-[0.2em]">
-            Full fix report
+            {hasFlags ? "Full fix report" : "Full approval report"}
           </span>
         </div>
         <h3 className="mt-2 text-lg font-bold tracking-tight text-ink sm:text-xl">
-          Get the exact fixes, written for your app
+          {heading}
         </h3>
-        <p className="mt-1 text-sm text-ink-muted">
-          The free notes tell you what&rsquo;s wrong. This tells you precisely
-          how to fix every flag and get approved.
-        </p>
+        <p className="mt-1 text-sm text-ink-muted">{subhead}</p>
       </div>
 
       <div className="px-5 py-5 sm:px-6">
         {step === "cta" && (
           <>
             <ul className="space-y-2.5">
-              {INCLUDES.map((item) => (
+              {includes.map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-ink">
                   <svg
                     viewBox="0 0 20 20"
@@ -151,7 +164,7 @@ export default function UnlockPanel({
                 disabled={loading}
                 className="rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                Get my fixes — $5
+                {hasFlags ? "Get my fixes — $5" : "Get my report — $5"}
               </button>
               <span className="text-xs text-ink-faint">
                 One-time, per report. Saved to your account forever.

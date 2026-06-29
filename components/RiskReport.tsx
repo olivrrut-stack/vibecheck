@@ -171,11 +171,10 @@ export default function RiskReport({
         )}
       </section>
 
-      {/* The $5 upsell: the deep, app-specific fix report. Only worth showing
-          when there are flagged guidelines to actually fix. */}
-      {count > 0 && (
-        <UnlockPanel diagnosis={diagnosis} answers={answers} />
-      )}
+      {/* The $5 upsell: the deep, app-specific report. Always shown once a
+          score exists. With flags it sells the fixes; when clean it sells
+          locking in the approval and driving the risk toward zero. */}
+      <UnlockPanel diagnosis={diagnosis} answers={answers} />
 
       {/* App description = the reviewer's plain-English verdict. */}
       <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">

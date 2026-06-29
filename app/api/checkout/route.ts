@@ -57,12 +57,9 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  if (body.diagnosis.risks.length === 0) {
-    return NextResponse.json(
-      { error: "There are no flagged guidelines to write fixes for." },
-      { status: 422 }
-    );
-  }
+  // Note: a clean result (no flags) can still buy the report. In that case the
+  // deep report is a proactive hardening plan, so we intentionally do not reject
+  // an empty risks list here.
 
   // Surface the two most common deploy misconfigs with a clear message instead
   // of a generic failure, so setup problems are obvious from the UI.

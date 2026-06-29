@@ -72,15 +72,8 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  if (diagnosis.risks.length === 0) {
-    return NextResponse.json(
-      {
-        error:
-          "No guideline flags to fix. Your diagnosis didn't surface any specific risks.",
-      },
-      { status: 422 }
-    );
-  }
+  // A clean result (no flags) is allowed: the report becomes a proactive
+  // hardening plan instead of fixes for specific flags.
 
   // One paid Anthropic call per request, so cap how many a single IP can run.
   const ip =
