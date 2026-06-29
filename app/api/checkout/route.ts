@@ -126,12 +126,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("[VibeCheck] checkout failed:", err);
-    const msg = err instanceof Error ? err.message : String(err);
-    // Targeted hint for the usual culprits, without leaking secret values.
+    const e = err as { type?: string; code?: string; message?: string };
+    const msg = e?.message ?? String(err);
     let reason = "Could not start checkout. Please try again.";
-    if (/stripe|api[_ ]?key|invalid.*key|authentication/i.test(msg)) {
-      reason =
-        "Stripe rejected the request. Check that STRIPE_SECRET_KEY is a valid test key in this deployment.";
+    if (typeof e?.type === "string" && e.type.startsWith("Stripe")) {
+      // Stripe redacts the key in its own message, so surfacing it is safe and
+      // tells us exactly what's wrong (invalid key, expired key, permissions…).
+      reason = `Stripe says: ${msg} [${e.type}${e.code ? ", " + e.code : ""}]`;
     } else if (/supabase|service.?role|relation|permission|jwt|createUnpaidReport/i.test(msg)) {
       reason =
         "Couldn't save your report. Check the Supabase service-role key and that the reports table exists.";
