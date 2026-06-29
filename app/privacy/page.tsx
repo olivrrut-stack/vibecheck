@@ -3,7 +3,7 @@ import LegalLayout from "@/components/LegalLayout";
 
 export const metadata: Metadata = { title: "Privacy Policy · VibeCheck" };
 
-const CONTACT = "support@vibecheckhq.app";
+const CONTACT = "oliver.rutland@icloud.com";
 
 export default function PrivacyPage() {
   return (

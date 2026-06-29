@@ -3,7 +3,7 @@ import LegalLayout from "@/components/LegalLayout";
 
 export const metadata: Metadata = { title: "Refund Policy · VibeCheck" };
 
-const CONTACT = "support@vibecheckhq.app";
+const CONTACT = "oliver.rutland@icloud.com";
 
 export default function RefundPage() {
   return (
