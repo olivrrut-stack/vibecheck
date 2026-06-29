@@ -95,6 +95,9 @@ export async function POST(req: Request) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      // Explicitly accept cards so checkout works on a fresh account without
+      // first activating payment methods in the Stripe dashboard.
+      payment_method_types: ["card"],
       // Inline price so no Stripe Product/Price needs pre-creating.
       line_items: [
         {
