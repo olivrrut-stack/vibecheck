@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { getTrack } from "@/lib/tracks";
 import type { Answers, Diagnosis, GameAnswers, Track } from "@/lib/types";
 import AuthForm from "./auth/AuthForm";
@@ -14,12 +14,117 @@ import { useAuth } from "./auth/AuthProvider";
 
 type Step = "cta" | "auth" | "context" | "redirecting";
 
+// Until Stripe finishes verifying the account, payments are off and the report
+// shows an "Unlocking this week" state with an email-notify capture instead of a
+// live buy button. Flip NEXT_PUBLIC_PAYMENTS_LIVE="true" in Vercel to switch the
+// real checkout on (no code change needed).
+const PAYMENTS_LIVE = process.env.NEXT_PUBLIC_PAYMENTS_LIVE === "true";
+
 function LockGlyph() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
       <rect x="4.5" y="10.5" width="15" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
       <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
+  );
+}
+
+// The pre-launch capture: makes it unmistakable the report can't be bought yet,
+// and lets a visitor leave an email to hear the moment it goes live.
+function ComingSoon({ price, track }: { price: string; track: Track }) {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "saving" | "done" | "error">(
+    "idle"
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setState("saving");
+    try {
+      const res = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, track }),
+      });
+      const data: unknown = await res.json().catch(() => null);
+      if (!res.ok) {
+        const msg =
+          data && typeof data === "object" && "error" in data
+            ? String((data as { error: unknown }).error)
+            : "Couldn't save your email. Please try again.";
+        setError(msg);
+        setState("error");
+        return;
+      }
+      setState("done");
+    } catch {
+      setError("Couldn't reach the server. Please try again.");
+      setState("error");
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-line bg-surface-2 p-5 text-center">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-accent">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+        </span>
+        <span className="font-display text-[11px] uppercase tracking-[0.16em]">
+          Unlocking this week
+        </span>
+      </span>
+
+      <p className="mt-3 text-2xl font-bold text-ink">
+        {price}{" "}
+        <span className="text-sm font-medium text-ink-faint">
+          one-time, per report
+        </span>
+      </p>
+      <p className="mt-1 text-sm text-ink-muted">
+        Deep fixes unlock this week. Drop your email and we&rsquo;ll tell you the
+        moment they go live, no account needed.
+      </p>
+
+      {state === "done" ? (
+        <p className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-risk-low">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>
+            <path
+              d="M3.5 8.5l3 3 6-7"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          You&rsquo;re on the list. We&rsquo;ll be in touch this week.
+        </p>
+      ) : (
+        <form onSubmit={submit} className="mt-4 flex flex-col gap-2 sm:flex-row">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={state === "saving"}
+            placeholder="you@example.com"
+            aria-label="Email to notify when fixes unlock"
+            className="flex-1 rounded-full border border-line-strong bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-accent disabled:opacity-60"
+          />
+          <button
+            type="submit"
+            disabled={state === "saving"}
+            className="rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          >
+            {state === "saving" ? "Saving…" : "Notify me"}
+          </button>
+        </form>
+      )}
+      {error && <p className="mt-2 text-sm text-risk-high">{error}</p>}
+    </div>
   );
 }
 
@@ -142,24 +247,32 @@ export default function UnlockPanel({
               ))}
             </ul>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <button
-                type="button"
-                onClick={begin}
-                disabled={loading}
-                className="rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-              >
-                {hasFlags ? `Get my fixes for ${price}` : `Get my report for ${price}`}
-              </button>
-              <span className="text-xs text-ink-faint">
-                One-time, per report. Saved to your account forever.
-              </span>
-            </div>
-            {!ready && (
-              <p className="mt-3 text-xs text-ink-faint">
-                Accounts aren&rsquo;t configured yet, so checkout is disabled in
-                this environment.
-              </p>
+            {PAYMENTS_LIVE ? (
+              <>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <button
+                    type="button"
+                    onClick={begin}
+                    disabled={loading}
+                    className="rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                  >
+                    {hasFlags ? `Get my fixes for ${price}` : `Get my report for ${price}`}
+                  </button>
+                  <span className="text-xs text-ink-faint">
+                    One-time, per report. Saved to your account forever.
+                  </span>
+                </div>
+                {!ready && (
+                  <p className="mt-3 text-xs text-ink-faint">
+                    Accounts aren&rsquo;t configured yet, so checkout is disabled
+                    in this environment.
+                  </p>
+                )}
+              </>
+            ) : (
+              <div className="mt-6">
+                <ComingSoon price={price} track={track} />
+              </div>
             )}
           </>
         )}
