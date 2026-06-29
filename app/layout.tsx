@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Baloo_2, Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import "./globals.css";
 
@@ -12,6 +12,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Rounded, bubbly display face used with restraint on the stat numbers and
+// labels (the metadata strip + the score) so they pop.
+const baloo = Baloo_2({
+  variable: "--font-baloo",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
 });
 
 // Resolves relative OG/icon URLs. Override with NEXT_PUBLIC_SITE_URL (e.g. preview deploys).
@@ -52,7 +60,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${baloo.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <AuthProvider>{children}</AuthProvider>

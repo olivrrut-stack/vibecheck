@@ -27,10 +27,10 @@ export default function MetaStrip({ cells }: { cells: MetaCell[] }) {
             i > 0 ? "border-l border-line" : ""
           }`}
         >
-          <div className="flex items-center justify-center text-sm font-bold leading-none text-ink whitespace-nowrap">
+          <div className="flex items-center justify-center font-display text-lg font-extrabold leading-none text-ink whitespace-nowrap">
             {cell.value}
           </div>
-          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-muted whitespace-nowrap">
+          <div className="mt-1 font-display text-xs font-bold leading-tight text-ink-muted whitespace-nowrap">
             {cell.label}
           </div>
         </div>
