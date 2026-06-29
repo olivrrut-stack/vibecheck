@@ -57,6 +57,32 @@ body {
   overflow-x: hidden;
 }
 
+/* Game-dev track: invert to a dark theme with a green accent. Overriding the
+   color tokens under [data-track="game"] flips every component that uses them,
+   so the whole listing reuses as-is. :has() darkens the page background behind
+   the wrapper so there's no white edge or overscroll flash. */
+[data-track="game"] {
+  color-scheme: dark;
+  --color-canvas: #0b0b0d;
+  --color-surface: #161618;
+  --color-surface-2: #202024;
+  --color-line: #2a2a31;
+  --color-line-strong: #3a3a44;
+  --color-ink: #f5f5f7;
+  --color-ink-muted: #a8a8b3;
+  --color-ink-faint: #76767f;
+  --color-accent: #22c55e;
+  --color-risk-low: #22c55e;
+  --color-risk-medium: #f59e0b;
+  --color-risk-high: #f43f5e;
+}
+
+html:has([data-track="game"]),
+body:has([data-track="game"]) {
+  background-color: #0b0b0d;
+}
+/* game-dev dark theme active */
+
 /* Visible, on-brand keyboard focus everywhere. The outline follows the
    element's own border-radius, so don't override the radius here. */
 :focus-visible {

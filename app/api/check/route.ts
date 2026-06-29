@@ -1,14 +1,21 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { extractJson } from "@/lib/aiJson";
-import { SYSTEM_PROMPT } from "@/lib/prompt";
+import { buildGameUserMessage, isGameAnswers } from "@/lib/gameMessages";
+import { GAME_SYSTEM_PROMPT, SYSTEM_PROMPT } from "@/lib/prompt";
 import {
   RATE_LIMIT,
   checkRateLimit,
   consumeDailyCap,
   refundDaily,
 } from "@/lib/ratelimit";
-import type { Answers, Diagnosis, RiskLevel } from "@/lib/types";
+import type {
+  Answers,
+  Diagnosis,
+  GameAnswers,
+  RiskLevel,
+  Track,
+} from "@/lib/types";
 import { clampScoreToLevel } from "@/lib/verdict";
 
 // The diagnosis is written by Claude on every request, server-side only.
@@ -106,21 +113,43 @@ export async function POST(req: Request) {
     );
   }
 
-  let answers: Answers;
+  let body: { answers?: unknown; track?: unknown };
   try {
-    answers = (await req.json()) as Answers;
+    body = (await req.json()) as { answers?: unknown; track?: unknown };
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  if (!answers?.safariDiff?.trim()) {
-    return NextResponse.json(
-      { error: "Please answer the question about what your app does." },
-      { status: 400 }
-    );
+  // Accept either { answers, track } or a bare answers object (the app track
+  // posts bare for backward compatibility). track defaults to "app".
+  const track: Track = body?.track === "game" ? "game" : "app";
+  const rawAnswers = (body?.answers ?? body) as unknown;
+
+  // The gating free-text differs per track: app = safariDiff, game = originality.
+  let primaryText = "";
+  if (track === "game") {
+    if (!isGameAnswers(rawAnswers)) {
+      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    }
+    primaryText = (rawAnswers as GameAnswers).originality ?? "";
+    if (!primaryText.trim()) {
+      return NextResponse.json(
+        { error: "Please answer what makes your game original." },
+        { status: 400 }
+      );
+    }
+  } else {
+    const a = rawAnswers as Answers;
+    if (!a?.safariDiff?.trim()) {
+      return NextResponse.json(
+        { error: "Please answer the question about what your app does." },
+        { status: 400 }
+      );
+    }
+    primaryText = a.safariDiff;
   }
 
-  if (answers.safariDiff.length > MAX_SAFARI_DIFF) {
+  if (primaryText.length > MAX_SAFARI_DIFF) {
     return NextResponse.json(
       { error: "That answer is too long. Please shorten it and try again." },
       { status: 400 }
@@ -166,14 +195,22 @@ export async function POST(req: Request) {
       // small, but reasoning needs room — too low a cap truncates the response.
       max_tokens: 8000,
       thinking: { type: "adaptive" },
-      system: SYSTEM_PROMPT,
+      system: track === "game" ? GAME_SYSTEM_PROMPT : SYSTEM_PROMPT,
       output_config: {
         // This is a well-scoped judgment task — low effort keeps latency to a
         // few seconds (the brief's promise) without hurting answer quality.
         effort: "low",
         format: { type: "json_schema", schema: OUTPUT_SCHEMA },
       },
-      messages: [{ role: "user", content: buildUserMessage(answers) }],
+      messages: [
+        {
+          role: "user",
+          content:
+            track === "game"
+              ? buildGameUserMessage(rawAnswers as GameAnswers)
+              : buildUserMessage(rawAnswers as Answers),
+        },
+      ],
     });
 
     if (message.stop_reason === "refusal") {
@@ -211,6 +248,7 @@ export async function POST(req: Request) {
     const result: Diagnosis = {
       ...parsed,
       score: clampScoreToLevel(parsed.riskLevel, parsed.score),
+      track,
     };
 
     // Usage visibility: a log line per check (Vercel function logs) plus a

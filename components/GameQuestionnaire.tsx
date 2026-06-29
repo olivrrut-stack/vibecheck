@@ -1,38 +1,35 @@
 "use client";
 
 import {
-  BUILD_TOOLS,
-  DATA_PRACTICES,
-  DOWNLOADS_CODE_OPTIONS,
-  NATIVE_FEATURES,
-  WEBVIEW_OPTIONS,
-  type Answers,
-  type DownloadsCode,
-  type WebViewShell,
+  EXISTING_IP_OPTIONS,
+  GAME_AUDIENCE_DATA,
+  GAME_BUILD_TOOLS,
+  GAME_GAMBLING_OPTIONS,
+  GAME_MONETIZATION,
+  type GameAnswers,
+  type GameGambling,
 } from "@/lib/types";
 import { useState } from "react";
 import Carousel from "./Carousel";
 import { OptionRow, QuestionCard } from "./QuestionParts";
 
-export default function Questionnaire({
+type MultiKey = "existingIP" | "monetization" | "audienceData";
+
+export default function GameQuestionnaire({
   value,
   onChange,
   onSubmit,
 }: {
-  value: Answers;
-  onChange: (next: Answers) => void;
+  value: GameAnswers;
+  onChange: (next: GameAnswers) => void;
   onSubmit: () => void;
 }) {
-  // "Other" is its own radio backed by a free-text input. We can't derive its
-  // selected state purely from value.buildTool (a half-typed custom value would
-  // flicker the radio off), so track it locally. Initialize on for a restored
-  // custom value that isn't one of the listed tools.
   const [otherMode, setOtherMode] = useState(
     value.buildTool !== "" &&
-      !(BUILD_TOOLS as readonly string[]).includes(value.buildTool)
+      !(GAME_BUILD_TOOLS as readonly string[]).includes(value.buildTool)
   );
 
-  const toggle = (key: "dataPractices" | "nativeFeatures", option: string) => {
+  const toggle = (key: MultiKey, option: string) => {
     const current = value[key];
     const next = current.includes(option)
       ? current.filter((o) => o !== option)
@@ -42,17 +39,16 @@ export default function Questionnaire({
 
   const answeredFlags = [
     value.buildTool !== "",
-    value.dataPractices.length > 0,
-    value.safariDiff.trim().length > 0,
-    value.downloadsCode !== "",
-    value.webViewShell !== "",
-    value.nativeFeatures.length > 0,
+    value.existingIP.length > 0,
+    value.originality.trim().length > 0,
+    value.monetization.length > 0,
+    value.gambling !== "",
+    value.audienceData.length > 0,
   ];
   const answeredCount = answeredFlags.filter(Boolean).length;
-  // Only the "what can your app do that a website can't" answer gates submission.
   const canSubmit = answeredFlags[2];
 
-  const q2Footer = canSubmit ? (
+  const q3Footer = canSubmit ? (
     <span className="flex items-center gap-1.5 font-medium text-risk-low">
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden>
         <path
@@ -77,11 +73,11 @@ export default function Questionnaire({
     <QuestionCard
       key="buildTool"
       index={1}
-      title="How did you build your app?"
-      footer="Sets the context. VibeCheck is tuned for AI-built apps."
+      title="How did you build your game?"
+      footer="Sets the context. VibeCheck is tuned for AI-built games."
     >
       <div className="grid grid-cols-2 gap-2">
-        {BUILD_TOOLS.map((tool) => (
+        {GAME_BUILD_TOOLS.map((tool) => (
           <OptionRow
             key={tool}
             type="radio"
@@ -111,103 +107,101 @@ export default function Questionnaire({
           value={value.buildTool}
           onChange={(e) => onChange({ ...value, buildTool: e.target.value })}
           maxLength={60}
-          placeholder="Which tool did you use?"
-          aria-label="The tool you used to build your app"
+          placeholder="Which engine or tool did you use?"
+          aria-label="The tool you used to build your game"
           className="w-full rounded-lg border border-line-strong bg-surface-2 px-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-accent"
         />
       )}
     </QuestionCard>,
 
     <QuestionCard
-      key="q1"
+      key="existingIP"
       index={2}
-      title="Does your app collect data or have accounts?"
-      footer="Probes Guideline 5.1.1, privacy and data."
+      title="Does it use characters, art, music, or names from existing games or brands?"
+      footer="Probes Guideline 5.2 and 4.1, intellectual property."
     >
-      {DATA_PRACTICES.map((practice) => (
+      {EXISTING_IP_OPTIONS.map((opt) => (
         <OptionRow
-          key={practice}
+          key={opt}
           type="checkbox"
-          name="dataPractices"
-          label={practice}
-          checked={value.dataPractices.includes(practice)}
-          onChange={() => toggle("dataPractices", practice)}
+          name="existingIP"
+          label={opt}
+          checked={value.existingIP.includes(opt)}
+          onChange={() => toggle("existingIP", opt)}
         />
       ))}
     </QuestionCard>,
 
     <QuestionCard
-      key="q2"
+      key="originality"
       index={3}
-      title="What can your app do that a website can't?"
-      hint="“Looks nice” or “easy to use” don’t count. Apple wants a real reason it must be native."
-      footer={q2Footer}
+      title="What makes your game original and worth playing?"
+      hint="“It’s fun” or “like [popular game]” won’t cut it. Apple rejects clones and thin games."
+      footer={q3Footer}
     >
       <textarea
-        value={value.safariDiff}
-        onChange={(e) => onChange({ ...value, safariDiff: e.target.value })}
+        value={value.originality}
+        onChange={(e) => onChange({ ...value, originality: e.target.value })}
         rows={5}
         maxLength={4000}
-        placeholder="e.g. it uses the camera, works offline, sends push notifications, accesses health data…"
+        placeholder="e.g. a rhythm roguelike where the level layout is generated from the song you pick…"
         className="w-full flex-1 resize-none rounded-lg border border-line-strong bg-surface-2 px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-accent"
       />
     </QuestionCard>,
 
     <QuestionCard
-      key="q3"
+      key="monetization"
       index={4}
-      title="Does your app download or run code from the internet?"
-      footer="Probes Guideline 2.5.2, code execution. “Yes” is a blocker."
+      title="How does your game make money?"
+      footer="Probes Guideline 3.1.1, in-app purchase and loot box odds."
     >
-      {DOWNLOADS_CODE_OPTIONS.map((opt) => (
+      {GAME_MONETIZATION.map((opt) => (
         <OptionRow
           key={opt}
-          type="radio"
-          name="downloadsCode"
+          type="checkbox"
+          name="monetization"
           label={opt}
-          checked={value.downloadsCode === opt}
-          onChange={() =>
-            onChange({ ...value, downloadsCode: opt as DownloadsCode })
-          }
+          checked={value.monetization.includes(opt)}
+          onChange={() => toggle("monetization", opt)}
         />
       ))}
     </QuestionCard>,
 
     <QuestionCard
-      key="q4"
+      key="gambling"
       index={5}
-      title="Is your main screen a website inside the app?"
-      footer="Probes Guideline 4.2, the web-wrapper test."
+      title="Does it involve gambling, betting, or casino-style chance?"
+      footer="Probes Guideline 5.3, gaming, gambling, and lotteries."
     >
-      {WEBVIEW_OPTIONS.map((opt) => (
+      {GAME_GAMBLING_OPTIONS.map((opt) => (
         <OptionRow
           key={opt}
           type="radio"
-          name="webViewShell"
+          name="gambling"
           label={opt}
-          checked={value.webViewShell === opt}
+          checked={value.gambling === opt}
           onChange={() =>
-            onChange({ ...value, webViewShell: opt as WebViewShell })
+            onChange({ ...value, gambling: opt as GameGambling })
           }
         />
       ))}
     </QuestionCard>,
 
     <QuestionCard
-      key="q5"
+      key="audienceData"
       index={6}
-      title="Which of these does your app use?"
-      footer="Real native features count in your favor against 4.2."
+      title="Who is it for, and what does it collect?"
+      footer="Probes Guideline 5.1.4 Kids and 5.1.1 data."
     >
       <div className="grid grid-cols-2 gap-2">
-        {NATIVE_FEATURES.map((feature) => (
+        {GAME_AUDIENCE_DATA.map((opt) => (
           <OptionRow
-            key={feature}
+            key={opt}
             type="checkbox"
-            name="nativeFeatures"
-            label={feature}
-            checked={value.nativeFeatures.includes(feature)}
-            onChange={() => toggle("nativeFeatures", feature)}
+            name="audienceData"
+            label={opt}
+            checked={value.audienceData.includes(opt)}
+            onChange={() => toggle("audienceData", opt)}
           />
         ))}
       </div>
@@ -241,7 +235,7 @@ export default function Questionnaire({
       <Carousel
         items={cards}
         unitLabel="Question"
-        ariaLabel="App questions"
+        ariaLabel="Game questions"
         answered={answeredFlags}
       />
 
@@ -251,7 +245,7 @@ export default function Questionnaire({
           disabled={!canSubmit}
           className="w-full rounded-full bg-accent px-6 py-4 text-base font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-ink-muted"
         >
-          Check my app
+          Check my game
         </button>
       </div>
     </form>

@@ -1,6 +1,12 @@
 import "server-only";
 import { createSupabaseAdminClient } from "./supabase/admin";
-import type { Answers, Diagnosis, FixReport, StoredReport } from "./types";
+import type {
+  Answers,
+  Diagnosis,
+  FixReport,
+  GameAnswers,
+  StoredReport,
+} from "./types";
 
 // Server-side data access for the `reports` table, always via the service-role
 // admin client (bypasses RLS). Every write to a report goes through here.
@@ -8,7 +14,7 @@ import type { Answers, Diagnosis, FixReport, StoredReport } from "./types";
 /** Create an unpaid report row at checkout time; returns its id. */
 export async function createUnpaidReport(
   userId: string,
-  answers: Answers,
+  answers: Answers | GameAnswers,
   diagnosis: Diagnosis
 ): Promise<string> {
   const admin = createSupabaseAdminClient();

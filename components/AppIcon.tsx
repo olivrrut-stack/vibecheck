@@ -50,5 +50,8 @@ export default function AppIcon({
 // Monochrome Apple blue — reads as iOS, not the generic AI blue→purple.
 export const VIBE_GRADIENT =
   "linear-gradient(160deg, #4aa3ff 0%, #0a84ff 50%, #0050d6 100%)";
+// Game-dev track: a green tile for the "phone on its side" game icon.
+export const GAME_GRADIENT =
+  "linear-gradient(160deg, #4ade80 0%, #22c55e 50%, #15803d 100%)";
 export const NEUTRAL_GRADIENT =
   "linear-gradient(150deg, #c4c4ca 0%, #a6a6ae 100%)";

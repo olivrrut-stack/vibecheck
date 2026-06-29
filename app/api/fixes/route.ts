@@ -10,7 +10,8 @@ import {
   consumeDailyCap,
   refundDaily,
 } from "@/lib/ratelimit";
-import type { Answers, Diagnosis } from "@/lib/types";
+import { isGameAnswers } from "@/lib/gameMessages";
+import type { Answers, Diagnosis, GameAnswers, Track } from "@/lib/types";
 import { isAnswers, isDiagnosis } from "@/lib/validate";
 
 // Gated PREVIEW of the paid "deep fixes" call, for testing report quality
@@ -28,8 +29,9 @@ const PREVIEW_ENABLED = process.env.ENABLE_FIXES_PREVIEW === "true";
 const MAX_SAFARI_DIFF = 4000;
 
 interface FixesRequest {
-  answers: Answers;
+  answers: Answers | GameAnswers;
   diagnosis: Diagnosis;
+  track?: Track;
 }
 
 export async function POST(req: Request) {
@@ -51,7 +53,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  if (!isAnswers(body?.answers) || !isDiagnosis(body?.diagnosis)) {
+  const track: Track = body?.track === "game" ? "game" : "app";
+  const answersOk =
+    track === "game" ? isGameAnswers(body?.answers) : isAnswers(body?.answers);
+  if (!answersOk || !isDiagnosis(body?.diagnosis)) {
     return NextResponse.json(
       { error: "Missing or malformed answers/diagnosis." },
       { status: 400 }
@@ -59,14 +64,18 @@ export async function POST(req: Request) {
   }
 
   const { answers, diagnosis } = body;
+  const primaryText =
+    track === "game"
+      ? (answers as GameAnswers).originality
+      : (answers as Answers).safariDiff;
 
-  if (!answers.safariDiff.trim()) {
+  if (!primaryText.trim()) {
     return NextResponse.json(
-      { error: "Please answer the question about what your app does." },
+      { error: "Please answer the key question." },
       { status: 400 }
     );
   }
-  if (answers.safariDiff.length > MAX_SAFARI_DIFF) {
+  if (primaryText.length > MAX_SAFARI_DIFF) {
     return NextResponse.json(
       { error: "That answer is too long. Please shorten it and try again." },
       { status: 400 }
@@ -104,7 +113,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const report = await generateFixReport(answers, diagnosis);
+    const report = await generateFixReport(answers, diagnosis, track);
     console.log("[VibeCheck] fixes(preview)", {
       backend: rate.backend,
       remaining: rate.remaining,

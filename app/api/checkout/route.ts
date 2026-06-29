@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { isGameAnswers } from "@/lib/gameMessages";
 import { attachStripeSession, createUnpaidReport } from "@/lib/reports";
-import { FIX_REPORT_PRICE_CENTS, getStripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { Answers, Diagnosis } from "@/lib/types";
+import { getTrack } from "@/lib/tracks";
+import type { Answers, Diagnosis, GameAnswers, Track } from "@/lib/types";
 import { isAnswers, isDiagnosis } from "@/lib/validate";
 
 // Starts the $5 unlock. Requires a logged-in user (their account is their
@@ -14,8 +16,9 @@ export const runtime = "nodejs";
 const MAX_SAFARI_DIFF = 4000;
 
 interface CheckoutRequest {
-  answers: Answers;
+  answers: Answers | GameAnswers;
   diagnosis: Diagnosis;
+  track?: Track;
 }
 
 function siteOrigin(req: Request): string {
@@ -45,13 +48,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  if (!isAnswers(body?.answers) || !isDiagnosis(body?.diagnosis)) {
+  const track: Track = body?.track === "game" ? "game" : "app";
+  const answersOk =
+    track === "game" ? isGameAnswers(body?.answers) : isAnswers(body?.answers);
+  if (!answersOk || !isDiagnosis(body?.diagnosis)) {
     return NextResponse.json(
       { error: "Missing or malformed answers/diagnosis." },
       { status: 400 }
     );
   }
-  if (body.answers.safariDiff.length > MAX_SAFARI_DIFF) {
+  const primaryText =
+    track === "game"
+      ? (body.answers as GameAnswers).originality
+      : (body.answers as Answers).safariDiff;
+  if ((primaryText ?? "").length > MAX_SAFARI_DIFF) {
     return NextResponse.json(
       { error: "That answer is too long. Please shorten it and try again." },
       { status: 400 }
@@ -82,14 +92,16 @@ export async function POST(req: Request) {
     );
   }
 
+  const cfg = getTrack(track);
+
   try {
     // Persist the report up front (unpaid) so payment metadata can point at a
-    // stable id and the unlock step has the data to generate from.
-    const reportId = await createUnpaidReport(
-      user.id,
-      body.answers,
-      body.diagnosis
-    );
+    // stable id and the unlock step has the data to generate from. The track is
+    // stored in the diagnosis so unlock generates the right (app/game) report.
+    const reportId = await createUnpaidReport(user.id, body.answers, {
+      ...body.diagnosis,
+      track,
+    });
 
     const origin = siteOrigin(req);
     const stripe = getStripe();
@@ -104,11 +116,10 @@ export async function POST(req: Request) {
           quantity: 1,
           price_data: {
             currency: "usd",
-            unit_amount: FIX_REPORT_PRICE_CENTS,
+            unit_amount: cfg.priceCents,
             product_data: {
-              name: "VibeCheck Fix Report",
-              description:
-                "Deep, app-specific fixes for every Apple review guideline you were flagged on.",
+              name: cfg.productName,
+              description: `Deep, ${cfg.noun}-specific fixes for every Apple review guideline you were flagged on.`,
             },
           },
         },

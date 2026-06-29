@@ -1,36 +1,24 @@
-import AppIcon, { VIBE_GRADIENT } from "./AppIcon";
+import { getTrack } from "@/lib/tracks";
+import type { Track } from "@/lib/types";
+import BrandIcon from "./BrandIcon";
 import MetaStrip from "./MetaStrip";
 
 // The VibeCheck "product page" header — icon, title, developer line, a decorative
-// price pill where the App Store "Get" button lives, and the metadata strip.
-// This is the chrome that frames the questionnaire as an App Store listing.
-export default function StoreHeader() {
+// "Free check" pill where the App Store "Get" button lives, and the metadata
+// strip. Parameterized by track so the game-dev listing reuses the same chrome
+// with its own icon, copy, and $7.99 price.
+export default function StoreHeader({ track = "app" }: { track?: Track }) {
+  const cfg = getTrack(track);
   return (
     <header>
       <div className="flex items-start gap-4 sm:gap-5">
-        <AppIcon gradient={VIBE_GRADIENT} size="lg">
-          {/* White phone with a notch and a blue check, matching the favicon. */}
-          <svg viewBox="0 0 44 64" className="h-16" aria-hidden>
-            <rect x="2" y="2" width="40" height="60" rx="9" fill="white" />
-            <rect x="16" y="6.5" width="12" height="3.4" rx="1.7" fill="#0a0a0b" />
-            <path
-              d="M14 33l7 7 13-15.5"
-              fill="none"
-              stroke="#0a6cff"
-              strokeWidth="5.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </AppIcon>
+        <BrandIcon track={track} size="lg" />
 
         <div className="min-w-0 flex-1 pt-0.5">
           <h1 className="truncate text-xl font-bold tracking-tight text-ink sm:text-2xl">
             VibeCheck
           </h1>
-          <p className="mt-0.5 text-sm text-accent">
-            App Rejection Risk Checker
-          </p>
+          <p className="mt-0.5 text-sm text-accent">{cfg.subtitle}</p>
           <div className="mt-3">
             <span className="inline-flex rounded-full bg-accent px-5 py-1.5 text-sm font-semibold text-white">
               Free check
@@ -40,8 +28,7 @@ export default function StoreHeader() {
       </div>
 
       <p className="mt-5 max-w-xl text-lg font-semibold leading-snug tracking-tight text-ink sm:text-xl">
-        The rejection-risk check is free. When you&rsquo;re ready, unlock the
-        exact fixes, written for your app, for $5.
+        {cfg.hero}
       </p>
 
       <div className="mt-5 border-y border-line py-4">
@@ -50,7 +37,7 @@ export default function StoreHeader() {
             { value: "Free", label: "Check" },
             { value: "6", label: "Questions" },
             { value: "~10s", label: "Result" },
-            { value: "$5", label: "Fixes" },
+            { value: cfg.priceLabel, label: "Fixes" },
             {
               value: (
                 <a

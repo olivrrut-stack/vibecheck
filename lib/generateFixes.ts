@@ -1,8 +1,15 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { extractJson } from "./aiJson";
-import { FIXES_SYSTEM_PROMPT } from "./prompt";
-import type { Answers, Diagnosis, FixReport } from "./types";
+import { buildGameFixesMessage } from "./gameMessages";
+import { FIXES_SYSTEM_PROMPT, GAME_FIXES_SYSTEM_PROMPT } from "./prompt";
+import type {
+  Answers,
+  Diagnosis,
+  FixReport,
+  GameAnswers,
+  Track,
+} from "./types";
 
 // Shared deep-fixes generator: the paid ($5) second AI call. Used by both the
 // gated preview route (/api/fixes) and the real post-payment unlock
@@ -117,8 +124,9 @@ function buildFixesMessage(answers: Answers, diagnosis: Diagnosis): string {
  * ceiling. The structured prompt still yields specific, app-tailored output.
  */
 export async function generateFixReport(
-  answers: Answers,
-  diagnosis: Diagnosis
+  answers: Answers | GameAnswers,
+  diagnosis: Diagnosis,
+  track: Track = "app"
 ): Promise<FixReport> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("Missing ANTHROPIC_API_KEY");
@@ -128,12 +136,20 @@ export async function generateFixReport(
     model: "claude-sonnet-4-6",
     max_tokens: 14000,
     thinking: { type: "adaptive" },
-    system: FIXES_SYSTEM_PROMPT,
+    system: track === "game" ? GAME_FIXES_SYSTEM_PROMPT : FIXES_SYSTEM_PROMPT,
     output_config: {
       effort: "low",
       format: { type: "json_schema", schema: FIXES_SCHEMA },
     },
-    messages: [{ role: "user", content: buildFixesMessage(answers, diagnosis) }],
+    messages: [
+      {
+        role: "user",
+        content:
+          track === "game"
+            ? buildGameFixesMessage(answers as GameAnswers, diagnosis)
+            : buildFixesMessage(answers as Answers, diagnosis),
+      },
+    ],
   });
 
   if (message.stop_reason === "refusal") {

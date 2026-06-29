@@ -90,7 +90,11 @@ export async function POST(req: Request) {
   await markReportPaid(reportId);
 
   try {
-    const fixes = await generateFixReport(report.answers, report.diagnosis);
+    const fixes = await generateFixReport(
+      report.answers,
+      report.diagnosis,
+      report.diagnosis.track ?? "app"
+    );
     await saveReportFixes(reportId, fixes);
     const updated = await getReportById(reportId);
     return NextResponse.json({ report: updated ?? { ...report, fixes, paid: true } });

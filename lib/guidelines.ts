@@ -11,6 +11,11 @@ const GUIDELINE_ANCHOR: Record<string, string> = {
   "4.1": "copycats",
   "2.3.1": "accurate-metadata",
   "3.1.1": "in-app-purchase",
+  // Game-track guidelines.
+  "5.1.4": "kids",
+  "5.2": "intellectual-property",
+  "5.3": "gaming-gambling-and-lotteries",
+  "4.7": "mini-apps-mini-games-streaming-games-chatbots-plug-ins-and-game-emulators",
 };
 
 export function guidelineHref(num: string): string {

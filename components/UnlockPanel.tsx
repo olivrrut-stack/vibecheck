@@ -2,53 +2,23 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import type { Answers, Diagnosis } from "@/lib/types";
+import { getTrack } from "@/lib/tracks";
+import type { Answers, Diagnosis, GameAnswers, Track } from "@/lib/types";
 import AuthForm from "./auth/AuthForm";
 import { useAuth } from "./auth/AuthProvider";
 
-// The $5 upsell on the result and its inline purchase flow:
+// The paid upsell on the result and its inline purchase flow:
 //   cta  ->  (account step if logged out)  ->  optional context  ->  Stripe
-// Payment + fix generation happen server-side (/api/checkout, /api/unlock); this
-// component only collects intent, the account, and any extra context.
+// Payment + fix generation happen server-side (/api/checkout, /api/unlock).
+// Track-aware: app sells $5 fixes, game sells $7.99 fixes.
 
 type Step = "cta" | "auth" | "context" | "redirecting";
-
-// What's in the report, worded for whichever case the result is in.
-const INCLUDES_FLAGGED = [
-  "The root cause of each flag, tied to your answers",
-  "Exactly what to change, step by step",
-  "A worked example built for your app's category",
-  "What the reviewer needs to see to approve",
-  "Paste-ready App Review notes to pre-clear it",
-];
-const INCLUDES_CLEAN = [
-  "The guidelines a reviewer will still scrutinize for an app like yours",
-  "Exactly what to tighten to push your risk toward zero",
-  "A worked example built for your app's category",
-  "What the reviewer needs to see to approve on the first try",
-  "Paste-ready App Review notes to pre-clear your submission",
-];
 
 function LockGlyph() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
-      <rect
-        x="4.5"
-        y="10.5"
-        width="15"
-        height="10"
-        rx="2.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path
-        d="M8 10.5V8a4 4 0 0 1 8 0v2.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
+      <rect x="4.5" y="10.5" width="15" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -56,27 +26,51 @@ function LockGlyph() {
 export default function UnlockPanel({
   diagnosis,
   answers,
+  track = "app",
 }: {
   diagnosis: Diagnosis;
-  answers: Answers;
+  answers: Answers | GameAnswers;
+  track?: Track;
 }) {
   const { user, loading, ready } = useAuth();
   const [step, setStep] = useState<Step>("cta");
   const [extra, setExtra] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const q2Short = answers.safariDiff.trim().length < 40;
+  const cfg = getTrack(track);
+  const noun = cfg.noun;
+  const price = cfg.priceLabel;
+
+  // The gating free-text field differs per track.
+  const primaryKey = track === "game" ? "originality" : "safariDiff";
+  const primaryText =
+    ((answers as unknown as Record<string, unknown>)[primaryKey] as string) ??
+    "";
+  const primaryShort = primaryText.trim().length < 40;
+
   const hasFlags = diagnosis.risks.length > 0;
-  const includes = hasFlags ? INCLUDES_FLAGGED : INCLUDES_CLEAN;
+  const includes = hasFlags
+    ? [
+        "The root cause of each flag, tied to your answers",
+        "Exactly what to change, step by step",
+        `A worked example built for your ${noun}'s category`,
+        "What the reviewer needs to see to approve",
+        "Paste-ready App Review notes to pre-clear it",
+      ]
+    : [
+        `The guidelines a reviewer will still scrutinize for a ${noun} like yours`,
+        "Exactly what to tighten to push your risk toward zero",
+        `A worked example built for your ${noun}'s category`,
+        "What the reviewer needs to see to approve on the first try",
+        "Paste-ready App Review notes to pre-clear your submission",
+      ];
   const heading = hasFlags
-    ? "Get the exact fixes, written for your app"
+    ? `Get the exact fixes, written for your ${noun}`
     : "Lock in your approval and drive the risk to zero";
   const subhead = hasFlags
     ? "The free notes tell you what’s wrong. This tells you precisely how to fix every flag and get approved."
-    : "You’re already low risk. This gives you the exact steps to make approval bulletproof and close the last gaps before you submit.";
+    : `You’re already low risk. This gives you the exact steps to make approval bulletproof and close the last gaps before you submit.`;
 
-  // Begin: logged-in users go straight to the optional context step; logged-out
-  // users make an account first.
   function begin() {
     setError(null);
     setStep(user ? "context" : "auth");
@@ -86,11 +80,11 @@ export default function UnlockPanel({
     setError(null);
     setStep("redirecting");
 
-    // Fold any extra context into Q2 so the existing generator picks it up.
-    const merged: Answers = extra.trim()
+    // Fold any extra context into the gating free-text so the generator uses it.
+    const merged = extra.trim()
       ? {
           ...answers,
-          safariDiff: `${answers.safariDiff.trim()}\n\nMore about the app: ${extra.trim()}`,
+          [primaryKey]: `${primaryText.trim()}\n\nMore about the ${noun}: ${extra.trim()}`,
         }
       : answers;
 
@@ -98,7 +92,7 @@ export default function UnlockPanel({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: merged, diagnosis }),
+        body: JSON.stringify({ answers: merged, diagnosis, track }),
       });
       const data: unknown = await res.json().catch(() => null);
       if (!res.ok || !data || typeof data !== "object" || !("url" in data)) {
@@ -138,19 +132,8 @@ export default function UnlockPanel({
             <ul className="space-y-2.5">
               {includes.map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-ink">
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-accent"
-                    aria-hidden
-                  >
-                    <path
-                      d="M4 10.5l4 4 8-9"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                  <svg viewBox="0 0 20 20" className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden>
+                    <path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   {item}
                 </li>
@@ -164,7 +147,7 @@ export default function UnlockPanel({
                 disabled={loading}
                 className="rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {hasFlags ? "Get my fixes — $5" : "Get my report — $5"}
+                {hasFlags ? `Get my fixes — ${price}` : `Get my report — ${price}`}
               </button>
               <span className="text-xs text-ink-faint">
                 One-time, per report. Saved to your account forever.
@@ -184,7 +167,7 @@ export default function UnlockPanel({
             <AuthForm
               initialMode="signup"
               heading="Create your account"
-              subheading="So your $5 report is saved and you can reopen it on any device, forever."
+              subheading={`So your ${price} report is saved and you can reopen it on any device, forever.`}
               onAuthed={() => setStep("context")}
             />
             <button
@@ -201,10 +184,10 @@ export default function UnlockPanel({
           <div className="mx-auto max-w-md">
             <label className="block">
               <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
-                Anything else about your app? (optional)
+                Anything else about your {noun}? (optional)
               </span>
               <p className="mt-1 text-xs text-ink-faint">
-                {q2Short
+                {primaryShort
                   ? "Your earlier answer was short. A line or two here makes the fixes much sharper."
                   : "Extra detail helps tailor the fixes, but it's not required."}
               </p>
@@ -214,7 +197,11 @@ export default function UnlockPanel({
                 rows={4}
                 maxLength={2000}
                 disabled={step === "redirecting"}
-                placeholder="e.g. it's a meal-planning app with a paid tier and a shared grocery list"
+                placeholder={
+                  track === "game"
+                    ? "e.g. a roguelike with a daily challenge and cosmetic-only IAP"
+                    : "e.g. it's a meal-planning app with a paid tier and a shared grocery list"
+                }
                 className="mt-2 w-full resize-none rounded-lg border border-line-strong bg-surface-2 px-4 py-3 text-sm text-ink placeholder:text-ink-faint focus:border-accent disabled:opacity-60"
               />
             </label>
@@ -228,7 +215,9 @@ export default function UnlockPanel({
                 disabled={step === "redirecting"}
                 className="rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {step === "redirecting" ? "Taking you to checkout…" : "Pay $5 and unlock"}
+                {step === "redirecting"
+                  ? "Taking you to checkout…"
+                  : `Pay ${price} and unlock`}
               </button>
               <span className="text-xs text-ink-faint">
                 Secure checkout by Stripe. Card never touches our servers.
@@ -236,7 +225,7 @@ export default function UnlockPanel({
             </div>
 
             <p className="mt-3 text-xs leading-relaxed text-ink-faint">
-              $5, one time, for this report. By paying you agree to our{" "}
+              {price}, one time, for this report. By paying you agree to our{" "}
               <Link href="/terms" className="text-ink-muted underline hover:text-ink">
                 Terms
               </Link>{" "}

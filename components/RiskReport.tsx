@@ -3,7 +3,8 @@ import {
   guidelineNumber,
   splitGuideline,
 } from "@/lib/guidelines";
-import type { Answers, Diagnosis } from "@/lib/types";
+import { getTrack } from "@/lib/tracks";
+import type { Answers, Diagnosis, GameAnswers } from "@/lib/types";
 import { VERDICT } from "@/lib/verdict";
 import AppIcon, { NEUTRAL_GRADIENT } from "./AppIcon";
 import MetaStrip from "./MetaStrip";
@@ -24,12 +25,14 @@ export default function RiskReport({
   onReset,
 }: {
   diagnosis: Diagnosis;
-  answers: Answers;
+  answers: Answers | GameAnswers;
   onReset: () => void;
 }) {
   const v = VERDICT[diagnosis.riskLevel];
   const count = diagnosis.risks.length;
   const topIssue = count > 0 ? guidelineNumber(diagnosis.risks[0].guideline) : "None";
+  const track = diagnosis.track ?? "app";
+  const cfg = getTrack(track);
 
   return (
     <div className="space-y-8">
@@ -41,7 +44,7 @@ export default function RiskReport({
           </AppIcon>
           <div className="min-w-0 flex-1 pt-0.5">
             <h2 className="truncate text-xl font-bold tracking-tight text-ink sm:text-2xl">
-              Your App
+              Your {cfg.Noun}
             </h2>
             <p className="mt-0.5 truncate text-sm text-ink-muted">
               Submitted via VibeCheck
@@ -174,7 +177,7 @@ export default function RiskReport({
       {/* The $5 upsell: the deep, app-specific report. Always shown once a
           score exists. With flags it sells the fixes; when clean it sells
           locking in the approval and driving the risk toward zero. */}
-      <UnlockPanel diagnosis={diagnosis} answers={answers} />
+      <UnlockPanel diagnosis={diagnosis} answers={answers} track={track} />
 
       {/* App description = the reviewer's plain-English verdict. */}
       <section className="vc-rise rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-card sm:p-6">

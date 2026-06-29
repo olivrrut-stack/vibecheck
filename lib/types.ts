@@ -1,6 +1,9 @@
 // Shared types for the questionnaire input and the diagnosis output.
 // Used by both the client (UI) and the server (API route).
 
+/** Which checker the user is in: the app-dev track or the game-dev track. */
+export type Track = "app" | "game";
+
 export type RiskLevel = "HIGH" | "MEDIUM" | "LOW";
 
 export type DownloadsCode = "Yes" | "No" | "I'm not sure";
@@ -40,6 +43,34 @@ export interface Diagnosis {
   score: number;
   risks: Risk[];
   verdict: string;
+  /** Which track produced this (defaults to "app"). Persisted in the report so
+   *  the unlock step generates the right (app vs game) fix report. */
+  track?: Track;
+}
+
+// ---- Game-dev track ------------------------------------------------------
+
+/** Q5 gambling answer for the game track. */
+export type GameGambling =
+  | "No"
+  | "Simulated only (no real money)"
+  | "Real-money betting or prizes"
+  | "I'm not sure";
+
+/** The 6 game-dev answers. `originality` (Q3) is the gating free-text signal. */
+export interface GameAnswers {
+  /** Q1 — engine / AI tool used (context, not a guideline). */
+  buildTool: string;
+  /** Q2 — existing characters/art/music/brands. Drives 5.2 + 4.1. */
+  existingIP: string[];
+  /** Q3 — what makes the game original and worth playing. The key signal (4.2/4.3). */
+  originality: string;
+  /** Q4 — monetization (IAP, loot boxes…). Drives 3.1.1. */
+  monetization: string[];
+  /** Q5 — gambling / chance mechanics. Drives 5.3. */
+  gambling: GameGambling | "";
+  /** Q6 — audience + data. Drives 5.1.4 (Kids) + 5.1.1. */
+  audienceData: string[];
 }
 
 /**
@@ -77,7 +108,7 @@ export interface FixReport {
 export interface StoredReport {
   id: string;
   user_id: string;
-  answers: Answers;
+  answers: Answers | GameAnswers;
   diagnosis: Diagnosis;
   fixes: FixReport | null;
   paid: boolean;
@@ -131,5 +162,54 @@ export const NATIVE_FEATURES = [
   "In-app purchases",
   "Location or health data",
   "Face ID or Touch ID",
+  "None of these",
+] as const;
+
+// ---- Game-dev option lists (single source of truth for the UI) ----
+
+export const GAME_BUILD_TOOLS = [
+  "Cursor",
+  "Claude Code",
+  "Codex",
+  "GitHub Copilot",
+  "Unity",
+  "Godot",
+  "GameMaker",
+  "Construct",
+  "Phaser",
+  "Lovable",
+  "Bolt",
+  "I coded it by hand",
+] as const;
+
+export const EXISTING_IP_OPTIONS = [
+  "Original art and characters only",
+  "Looks like an existing game",
+  "Uses recognizable names, logos, or brands",
+  "Uses music or sound from other sources",
+  "I'm not sure",
+] as const;
+
+export const GAME_MONETIZATION = [
+  "Free, no purchases",
+  "Paid upfront",
+  "In-app purchases (coins, items, levels)",
+  "Loot boxes, gacha, or randomized rewards",
+  "Subscriptions",
+  "Ads",
+] as const;
+
+export const GAME_GAMBLING_OPTIONS: GameGambling[] = [
+  "No",
+  "Simulated only (no real money)",
+  "Real-money betting or prizes",
+  "I'm not sure",
+];
+
+export const GAME_AUDIENCE_DATA = [
+  "Aimed at or likely to attract kids",
+  "Has accounts or login",
+  "Collects personal data",
+  "Has a privacy policy",
   "None of these",
 ] as const;
