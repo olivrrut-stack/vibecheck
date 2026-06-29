@@ -9,8 +9,8 @@ import {
   type GameAnswers,
   type GameGambling,
 } from "@/lib/types";
-import { useState } from "react";
-import Carousel from "./Carousel";
+import { useEffect, useRef, useState } from "react";
+import Carousel, { type CarouselHandle } from "./Carousel";
 import { OptionRow, QuestionCard } from "./QuestionParts";
 
 type MultiKey = "existingIP" | "monetization" | "audienceData";
@@ -27,6 +27,21 @@ export default function GameQuestionnaire({
   const [otherMode, setOtherMode] = useState(
     value.buildTool !== "" &&
       !(GAME_BUILD_TOOLS as readonly string[]).includes(value.buildTool)
+  );
+
+  // Auto-advance after a single-select answer (build tool, gambling). Multi-
+  // selects and free text stay manual so multiple picks aren't cut short.
+  const carouselRef = useRef<CarouselHandle>(null);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const advance = () => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    advanceTimer.current = setTimeout(() => carouselRef.current?.next(), 250);
+  };
+  useEffect(
+    () => () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    },
+    []
   );
 
   const toggle = (key: MultiKey, option: string) => {
@@ -87,6 +102,7 @@ export default function GameQuestionnaire({
             onChange={() => {
               setOtherMode(false);
               onChange({ ...value, buildTool: tool });
+              advance();
             }}
           />
         ))}
@@ -180,9 +196,10 @@ export default function GameQuestionnaire({
           name="gambling"
           label={opt}
           checked={value.gambling === opt}
-          onChange={() =>
-            onChange({ ...value, gambling: opt as GameGambling })
-          }
+          onChange={() => {
+            onChange({ ...value, gambling: opt as GameGambling });
+            advance();
+          }}
         />
       ))}
     </QuestionCard>,
@@ -233,6 +250,7 @@ export default function GameQuestionnaire({
       </div>
 
       <Carousel
+        ref={carouselRef}
         items={cards}
         unitLabel="Question"
         ariaLabel="Game questions"

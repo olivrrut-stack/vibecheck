@@ -1,26 +1,22 @@
 "use client";
 
 import {
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 
-// The App Store screenshot gallery, made interactive. A horizontal snap-scroll
-// track of portrait cards you swipe through like a listing's screenshots, with
-// page dots, prev/next controls, and a live "N of M" announcement. Reused for
-// the questions (input) and the App Review Notes (result) so both read as the
-// same gallery — the signature element of the whole pastiche.
+/** Imperative handle so a parent can drive the gallery (e.g. auto-advance on
+ *  answering a single-select question). */
+export interface CarouselHandle {
+  next: () => void;
+}
 
-export default function Carousel({
-  items,
-  unitLabel,
-  ariaLabel,
-  itemClassName = "w-[90vw] max-w-[440px] sm:w-[330px]",
-  answered,
-}: {
+interface CarouselProps {
   items: ReactNode[];
   /** Singular noun for the position read-out, e.g. "Question" or "Note". */
   unitLabel: string;
@@ -29,7 +25,24 @@ export default function Carousel({
   itemClassName?: string;
   /** Per-item completion state; answered items get a green dot. */
   answered?: boolean[];
-}) {
+}
+
+// The App Store screenshot gallery, made interactive. A horizontal snap-scroll
+// track of portrait cards you swipe through like a listing's screenshots, with
+// page dots, prev/next controls, and a live "N of M" announcement. Reused for
+// the questions (input) and the App Review Notes (result) so both read as the
+// same gallery — the signature element of the whole pastiche.
+
+const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carousel(
+  {
+    items,
+    unitLabel,
+    ariaLabel,
+    itemClassName = "w-[90vw] max-w-[440px] sm:w-[330px]",
+    answered,
+  },
+  ref
+) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const count = items.length;
@@ -76,6 +89,14 @@ export default function Carousel({
     const left = slot.offsetLeft - (track.clientWidth - slot.offsetWidth) / 2;
     track.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
   }, []);
+
+  // Let the parent advance the gallery (auto-advance after a single-select
+  // answer). Clamped so it never scrolls past the last card.
+  useImperativeHandle(
+    ref,
+    () => ({ next: () => scrollToIndex(Math.min(active + 1, count - 1)) }),
+    [active, count, scrollToIndex]
+  );
 
   return (
     <div>
@@ -139,4 +160,6 @@ export default function Carousel({
       </div>
     </div>
   );
-}
+});
+
+export default Carousel;

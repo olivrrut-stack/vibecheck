@@ -10,8 +10,8 @@ import {
   type DownloadsCode,
   type WebViewShell,
 } from "@/lib/types";
-import { useState } from "react";
-import Carousel from "./Carousel";
+import { useEffect, useRef, useState } from "react";
+import Carousel, { type CarouselHandle } from "./Carousel";
 import { OptionRow, QuestionCard } from "./QuestionParts";
 
 export default function Questionnaire({
@@ -30,6 +30,22 @@ export default function Questionnaire({
   const [otherMode, setOtherMode] = useState(
     value.buildTool !== "" &&
       !(BUILD_TOOLS as readonly string[]).includes(value.buildTool)
+  );
+
+  // Auto-advance to the next card after a single-select answer, with a short
+  // beat so the selection visibly registers before the gallery slides. Only the
+  // single-choice questions advance; multi-selects and free text stay manual.
+  const carouselRef = useRef<CarouselHandle>(null);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const advance = () => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    advanceTimer.current = setTimeout(() => carouselRef.current?.next(), 250);
+  };
+  useEffect(
+    () => () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    },
+    []
   );
 
   const toggle = (key: "dataPractices" | "nativeFeatures", option: string) => {
@@ -91,6 +107,7 @@ export default function Questionnaire({
             onChange={() => {
               setOtherMode(false);
               onChange({ ...value, buildTool: tool });
+              advance();
             }}
           />
         ))}
@@ -166,9 +183,10 @@ export default function Questionnaire({
           name="downloadsCode"
           label={opt}
           checked={value.downloadsCode === opt}
-          onChange={() =>
-            onChange({ ...value, downloadsCode: opt as DownloadsCode })
-          }
+          onChange={() => {
+            onChange({ ...value, downloadsCode: opt as DownloadsCode });
+            advance();
+          }}
         />
       ))}
     </QuestionCard>,
@@ -186,9 +204,10 @@ export default function Questionnaire({
           name="webViewShell"
           label={opt}
           checked={value.webViewShell === opt}
-          onChange={() =>
-            onChange({ ...value, webViewShell: opt as WebViewShell })
-          }
+          onChange={() => {
+            onChange({ ...value, webViewShell: opt as WebViewShell });
+            advance();
+          }}
         />
       ))}
     </QuestionCard>,
@@ -239,6 +258,7 @@ export default function Questionnaire({
       </div>
 
       <Carousel
+        ref={carouselRef}
         items={cards}
         unitLabel="Question"
         ariaLabel="App questions"
