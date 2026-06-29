@@ -64,6 +64,27 @@ export async function POST(req: Request) {
     );
   }
 
+  // Surface the two most common deploy misconfigs with a clear message instead
+  // of a generic failure, so setup problems are obvious from the UI.
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json(
+      {
+        error:
+          "Payments aren't configured yet: the server is missing STRIPE_SECRET_KEY. Add it in Vercel and redeploy.",
+      },
+      { status: 503 }
+    );
+  }
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      {
+        error:
+          "Server isn't fully configured: missing SUPABASE_SERVICE_ROLE_KEY. Add it in Vercel and redeploy.",
+      },
+      { status: 503 }
+    );
+  }
+
   try {
     // Persist the report up front (unpaid) so payment metadata can point at a
     // stable id and the unlock step has the data to generate from.
@@ -108,9 +129,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("[VibeCheck] checkout failed:", err);
-    return NextResponse.json(
-      { error: "Could not start checkout. Please try again." },
-      { status: 500 }
-    );
+    const msg = err instanceof Error ? err.message : String(err);
+    // Targeted hint for the usual culprits, without leaking secret values.
+    let reason = "Could not start checkout. Please try again.";
+    if (/stripe|api[_ ]?key|invalid.*key|authentication/i.test(msg)) {
+      reason =
+        "Stripe rejected the request. Check that STRIPE_SECRET_KEY is a valid test key in this deployment.";
+    } else if (/supabase|service.?role|relation|permission|jwt|createUnpaidReport/i.test(msg)) {
+      reason =
+        "Couldn't save your report. Check the Supabase service-role key and that the reports table exists.";
+    }
+    return NextResponse.json({ error: reason }, { status: 500 });
   }
 }
