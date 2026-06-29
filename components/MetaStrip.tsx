@@ -27,7 +27,7 @@ export default function MetaStrip({ cells }: { cells: MetaCell[] }) {
             i > 0 ? "border-l border-line" : ""
           }`}
         >
-          <div className="flex items-center justify-center font-display text-lg font-bold leading-none text-ink whitespace-nowrap">
+          <div className="flex items-center justify-center font-sans text-lg font-bold leading-none text-ink whitespace-nowrap">
             {cell.value}
           </div>
           <div className="mt-1 font-display text-xs font-semibold leading-tight text-ink-muted whitespace-nowrap">
