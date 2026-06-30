@@ -8,6 +8,7 @@ export default function SiteFooter() {
     <footer className="mt-16 border-t border-line pt-6">
       <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
         {[
+          { href: "/listing", label: "Listing checker" },
           { href: "/terms", label: "Terms" },
           { href: "/privacy", label: "Privacy" },
           { href: "/refund", label: "Refunds" },

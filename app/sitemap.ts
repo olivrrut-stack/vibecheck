@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     entry("", 1, "weekly"),
     entry("/games", 0.9, "weekly"),
+    entry("/listing", 0.8, "monthly"),
     entry("/privacy", 0.3, "monthly"),
     entry("/terms", 0.3, "monthly"),
     entry("/refund", 0.3, "monthly"),

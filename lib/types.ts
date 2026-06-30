@@ -130,6 +130,29 @@ export interface StoredReport {
   paid_at: string | null;
 }
 
+// ---- Listing metadata checker (free tool at /listing) --------------------
+
+export interface ListingAnswers {
+  appName: string;
+  subtitle: string;
+  keywords: string;
+  promoText: string;
+  description: string;
+}
+
+export interface ListingIssue {
+  field: "App name" | "Subtitle" | "Keywords" | "Description" | "Screenshots";
+  problem: string;
+  fix: string;
+}
+
+export interface ListingDiagnosis {
+  riskLevel: RiskLevel;
+  issues: ListingIssue[];
+  cleanedKeywords: string;
+  reviewNotes: string;
+}
+
 // ---- Questionnaire option lists (single source of truth for the UI) ----
 
 // Major AI code/app builders. "Other" (free-text) and the empty default are
