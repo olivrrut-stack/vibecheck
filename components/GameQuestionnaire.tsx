@@ -223,6 +223,32 @@ export default function GameQuestionnaire({
         ))}
       </div>
     </QuestionCard>,
+
+    <QuestionCard
+      key="codePaste"
+      index={7}
+      title="Paste anything suspicious (optional)"
+      hint="Config files, IAP setup, download logic — anything you're unsure about. Used as primary evidence."
+      footer={
+        <span className="text-ink-faint">
+          Optional. Skip and hit &ldquo;Check my game&rdquo; below if you don&rsquo;t have anything to paste.
+        </span>
+      }
+    >
+      <textarea
+        value={value.codePaste ?? ""}
+        onChange={(e) => onChange({ ...value, codePaste: e.target.value })}
+        rows={7}
+        maxLength={4000}
+        placeholder={"// paste IAP setup, download logic, config files, etc."}
+        className="w-full flex-1 resize-none rounded-lg border border-line-strong bg-surface-2 px-4 py-3 font-mono text-xs text-ink placeholder:text-ink-faint focus:border-accent"
+      />
+      {(value.codePaste?.length ?? 0) > 0 && (
+        <p className="mt-1.5 text-right font-mono text-[10px] text-ink-faint">
+          {value.codePaste?.length ?? 0}/4000
+        </p>
+      )}
+    </QuestionCard>,
   ];
 
   return (

@@ -26,6 +26,9 @@ export interface Answers {
   webViewShell: WebViewShell | "";
   /** Q6 — native capabilities actually used (multi-select). */
   nativeFeatures: string[];
+  /** Optional code paste (Info.plist, AppDelegate, WKWebView setup, etc.).
+   *  Used as primary evidence when present; overrides or sharpens Q answers. */
+  codePaste?: string;
 }
 
 export interface Risk {
@@ -69,6 +72,8 @@ export interface GameAnswers {
   gambling: GameGambling | "";
   /** Q6 — audience + data. Drives 5.1.4 (Kids) + 5.1.1. */
   audienceData: string[];
+  /** Optional code paste. Used as primary evidence when present. */
+  codePaste?: string;
 }
 
 /**

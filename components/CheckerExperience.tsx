@@ -22,6 +22,7 @@ const EMPTY_APP: Answers = {
   downloadsCode: "",
   webViewShell: "",
   nativeFeatures: [],
+  codePaste: "",
 };
 
 const EMPTY_GAME: GameAnswers = {
@@ -31,6 +32,7 @@ const EMPTY_GAME: GameAnswers = {
   monetization: [],
   gambling: "",
   audienceData: [],
+  codePaste: "",
 };
 
 // The whole checker, parameterized by track. The app (light) and game (dark)
