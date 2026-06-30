@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Nunito } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,23 +24,35 @@ const rounded = Nunito({
   weight: ["500", "600", "700", "800"],
 });
 
-// Resolves relative OG/icon URLs. Override with NEXT_PUBLIC_SITE_URL (e.g. preview deploys).
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vibecheckhq.app";
-
 const title = "VibeCheck: App rejection risk checker";
 const description =
   "Find out if your AI-built app will get rejected before Apple does. Free check, with deep fixes for $5. Built for Cursor, Lovable, Bolt, and Claude Code users.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
+  applicationName: "VibeCheck",
   title,
   description,
+  keywords: [
+    "App Store rejection",
+    "app review",
+    "App Store review guidelines",
+    "AI-built app",
+    "vibe coding",
+    "Cursor",
+    "Lovable",
+    "Bolt",
+    "Claude Code",
+    "Replit",
+    "indie app developer",
+  ],
+  alternates: { canonical: "/" },
   openGraph: {
     title,
     description,
     siteName: "VibeCheck",
     type: "website",
-    url: siteUrl,
+    url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",

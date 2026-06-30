@@ -42,6 +42,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // Thin, templated, and effectively infinite (every score/level/track combo).
+    // Keep them crawlable enough to share on social, but out of the search index
+    // so they don't dilute the domain with near-duplicate pages.
+    robots: { index: false, follow: true },
     openGraph: {
       title,
       description,
